@@ -49,6 +49,8 @@ asteroid_wrap()
 check_level()
 --i guess we makin ufos now-----
 rotate_ufo()
+wrap_ufo()
+move_ufo()
 end 
  
 
@@ -69,11 +71,11 @@ for i=1,#rocks do
   p1=rocks[i]
   p2=rocks[i%#rocks+1]
 
-  x1 = a.x + (size*p1.x*cos(a.r) - size*p1.y*sin(a.r))
-  y1 = a.y + (size*p1.x*sin(a.r) + size*p1.y*cos(a.r))
+  x1 = a.x + (a.s*p1.x*cos(a.r) - a.s*p1.y*sin(a.r))
+  y1 = a.y + (a.s*p1.x*sin(a.r) + a.s*p1.y*cos(a.r))
 
-  x2 = a.x + (size*p2.x*cos(a.r) - size*p2.y*sin(a.r))
-  y2 = a.y + (size*p2.x*sin(a.r) + size*p2.y*cos(a.r))
+  x2 = a.x + (a.s*p2.x*cos(a.r) - a.s*p2.y*sin(a.r))
+  y2 = a.y + (a.s*p2.x*sin(a.r) + a.s*p2.y*cos(a.r))
   line(x1,y1,x2,y2,7)
 end
 end 
@@ -89,19 +91,20 @@ for i=1,#ship do
 				ux1 = u.x + (u1.x*cos(u.r)-u1.y*sin(u.r))*3
 				uy1 = u.y + (u1.x*sin(u.r)+u1.y*cos(u.r))*3
 				ux2 = u.x + (u2.x*cos(u.r)-u2.y*sin(u.r))*3
-				uy2 = u.y + (u2.x*sin(u.r)+u1.y*cos(u.r))*3
+				uy2 = u.y + (u2.x*sin(u.r)+u2.y*cos(u.r))*3
 				--this line is temporary--
 				--will be replaced by--
 				--ai movement function--
-				u.y+=0.02
+				
 				----------------------------
-				line(ux1,uy1,ux2,uy2)
+				line(ux1,uy1,ux2,uy2,11)
 end
 end
 
 end
 				
 -->8
+------------player--------------
 function movement()
 --quick test to make sure rotation
 --is correct
@@ -193,6 +196,7 @@ end
 
 end
 -->8
+------------asteroids----------
 function spawn_asteroids()
 rocks={ {x=0,y=-6}, {x=5,y=-2}, {x=4,y=4}, {x=-3,y=5}, {x=-6,y=0}, {x=-4,y=-4} }
 asteroids = {}
@@ -229,14 +233,14 @@ function split_asteroid(x,y)
 --asteroid and make three small
 --asteroids surrounding it-----
 for i=1,2 do
-add(asteroids,{x=x+rnd(60)-30,y=y+rnd(60)-30,r=rnd(1),rs=rnd(0.01)-0.002,s=1})
+add(asteroids,{x=x+rnd(60)-30,y=y+rnd(60)-30,r=rnd(1),rs=rnd(0.01)-0.002,s=2})
 end 
 
 end
 
 function split_med_asteroid(x,y)
 for i=1,3 do 
-add(asteroids,{x=x+rnd(60)-30,y=y+rnd(60)-30,r=rnd(1),rs=rnd(0.01)-0.002,s=.1})
+add(asteroids,{x=x+rnd(60)-30,y=y+rnd(60)-30,r=rnd(1),rs=rnd(0.01)-0.002,s=1})
 end
 
 end
@@ -256,7 +260,7 @@ local hit_r = radius * 3
   if a.s == 3
   then split_asteroid(ax,ay)
   score+=20
-  elseif a.s == 1
+  elseif a.s == 2
   then split_med_asteroid(ax,ay)
   score+=50
   else score+=100
@@ -314,10 +318,11 @@ end
 function call_ufo()
 ufo ={}
 ship = {{x=0,y=0},{x=2,y=1},{x=4,y=0},{x=2,y=-1}}
-radius2=0
+radius2=30
 ufo_x=0
 ufo_y=0
 rotu=0
+anglu=0
 rotu_speed=0.004-rnd(0.002)
 
 local wall=flr(rnd(5))
@@ -334,7 +339,7 @@ else ufo_y=0
 ufo_x=rnd(128)
 end
 
-add(ufo,{x=ufo_x,y=ufo_y,r=rotu,rs=rotu_speed})
+add(ufo,{x=ufo_x,y=ufo_y,r=rotu,rs=rotu_speed,r2=radius2,a=anglu})
 end
 
 
@@ -343,7 +348,33 @@ function rotate_ufo()
  u.r += (u.rs%.25)
  end
 end 
+
+function wrap_ufo()
+ for u in all(ufo) do
+  if u.x < 0
+   then u.x = 128
+  elseif u.x > 128
+   then u.x = 0
+  elseif u.y < 0
+   then u.y = 128
+  elseif u.y > 128
+   then u.y = 0
+  end
+ end
+end       
   
+  
+function move_ufo()
+
+for u in all(ufo) do
+ u.a += 0.005-rnd(0.0005)
+
+ u.x = 64+cos(u.a)*u.r2*2 
+ u.y = 64+sin(u.a)*u.r2*2
+
+end
+
+end  
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
