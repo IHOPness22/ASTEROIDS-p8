@@ -15,7 +15,7 @@ right_y=4
 k=0.3
 --timer------------------------
 tick=0
-timer=20
+timer=rnd(420)
 -------------------------------
 --ang---
 a=0
@@ -37,6 +37,8 @@ score=0
 -----just for test-----------
 call_ufo()
 ------------------------------
+----call the ufo's laser------
+laser={}
 end
 
 function _update()
@@ -46,11 +48,23 @@ acwb()
 asteroid_rotation()
 --update_asteroid_count()-------
 asteroid_wrap()
+move_asteroids()
 check_level()
 --i guess we makin ufos now-----
 rotate_ufo()
 wrap_ufo()
 move_ufo()
+
+
+------for ufo to shoot---------
+tick+=1
+if tick >= timer
+then tick = 0
+ufo_fires()
+end
+move_laser()
+
+
 end 
  
 
@@ -100,6 +114,12 @@ for i=1,#ship do
 				line(ux1,uy1,ux2,uy2,11)
 end
 end
+
+--------laser of ufos----------
+for l in all(laser) do
+ line(l.x,l.y,l.x,l.y,11)
+end
+
 
 end
 				
@@ -299,6 +319,17 @@ for a in all(asteroids) do
 end
 end     
 
+-------time to move asteroids--
+function move_asteroids()
+ for a in all(asteroids) do
+  a.x+=rnd(0.09)
+  a.y+=rnd(0.09)
+ 
+ end
+
+end
+
+
 
 -->8
 -------level-------------------
@@ -324,6 +355,13 @@ ufo_y=0
 rotu=0
 anglu=0
 rotu_speed=0.004-rnd(0.002)
+diru=0
+if rnd(1) < 0.5 then
+  diru = -1
+else
+  diru = 1
+end
+
 
 local wall=flr(rnd(5))
 if wall==1 
@@ -339,7 +377,7 @@ else ufo_y=0
 ufo_x=rnd(128)
 end
 
-add(ufo,{x=ufo_x,y=ufo_y,r=rotu,rs=rotu_speed,r2=radius2,a=anglu})
+add(ufo,{x=ufo_x,y=ufo_y,r=rotu,rs=rotu_speed,r2=radius2,a=anglu,d=diru})
 end
 
 
@@ -369,12 +407,36 @@ function move_ufo()
 for u in all(ufo) do
  u.a += 0.005-rnd(0.0005)
 
- u.x = 64+cos(u.a)*u.r2*2 
- u.y = 64+sin(u.a)*u.r2*2
+ u.x = 64+cos(u.a*u.d)*u.r2*2 
+ u.y = 64+sin(u.a*u.d)*u.r2*2
 
 end
 
 end  
+
+------ufo needs to shoot player-
+function ufo_fires()
+ for u in all(ufo) do
+  dx=cen_x-u.x
+  dy=cen_y-u.y
+  len = sqrt(dx*dx+dy*dy)
+  add(laser,{x=u.x,y=u.y,dx=dx/len,dy=dy/len,speed=2.5})
+ end
+end
+
+
+function move_laser() 
+ for l in all(laser) do
+ l.x += l.speed*l.dx
+ l.y += l.speed*l.dy
+ if l.y<0 or l.x<0 or l.x>128 or l.y>128
+ then del(laser,l)
+ end
+ end
+
+
+end
+
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
