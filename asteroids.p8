@@ -76,6 +76,22 @@ for p in all(parts) do
  end 
 end 
 
+for b in all(bullets) do
+ b.d -= 1
+ if b.d <= 0
+  then del(bullets, b)
+ end
+ if b.x < 0
+  then b.x = 128
+ elseif b.x > 128
+  then b.x = 0
+ elseif b.y < 0
+  then b.y = 128
+ elseif b.y > 128 
+  then b.y=0 
+ end  
+end  
+
 
 end 
  
@@ -221,16 +237,13 @@ end
 -->8
 ---shooting-------
 function shoot()
-if btn(❎) 
-then add(bullets,{x=nx,y=ny,speed=1}) 
+if btn(❎) and #bullets < 1 
+then add(bullets,{x=nx,y=ny,speed=1,d=30}) 
 end
 
 for b in all(bullets) do
 b.x+=speed*fx
 b.y+=speed*fy
-if b.y<0 or b.x<0 or b.x>128 or b.y>128
- then del(bullets,b)
-end
 end
 
 end
