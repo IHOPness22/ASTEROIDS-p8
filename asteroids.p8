@@ -39,6 +39,8 @@ call_ufo()
 ------------------------------
 ----call the ufo's laser------
 laser={}
+-----particles when something gets hit----
+parts={}
 end
 
 function _update()
@@ -61,8 +63,18 @@ tick+=1
 if tick >= timer
 then tick = 0
 ufo_fires()
+timer=rnd(420)
 end
 move_laser()
+
+------particles-----------
+for p in all(parts) do
+ p.x+=p.sx
+ p.y+=p.sy
+ if p.x<0 or p.x>128 or p.y < 0 or p.y > 128
+  then del(parts, p)
+ end 
+end 
 
 
 end 
@@ -119,7 +131,14 @@ end
 for l in all(laser) do
  line(l.x,l.y,l.x,l.y,11)
 end
-
+ 
+ 
+----particles boiiii-----------  
+for p in all(parts) do
+ line(p.x,p.y,p.x,p.y,1)
+  --1
+ end
+  
 
 end
 				
@@ -275,6 +294,9 @@ local hit_r = radius * 3
  if ((b.x-a.x)^2 + (b.y-a.y)^2) <= hit_r
   then del(bullets, b)
   del(asteroids,a)
+  for i=1, 50 do
+  add(parts,{x=a.x,y=a.y,sx=rnd(2)-1,sy=rnd(2)-1})
+  end
   local ax = a.x
   local ay = a.y
   if a.s == 3
@@ -326,6 +348,11 @@ function move_asteroids()
   a.y+=rnd(0.09)
  
  end
+
+end
+
+function asteroid_parts()
+ 
 
 end
 
