@@ -157,7 +157,7 @@ for p in all(parts) do
   
 ----orbital cannon time-------
 for o in all(oc) do
- line(o.x,o.y,o.sx,o.sy,8)  
+ line(o.x,o.y,o.sx,o.sy,1)  
 end
 
 
@@ -584,6 +584,15 @@ for o in all(oc) do
  end
 end
 end  
+
+
+---if laser alligns with player
+function check_orbit()
+ 
+end  
+
+
+
 
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
