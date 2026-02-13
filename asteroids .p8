@@ -41,6 +41,9 @@ call_ufo()
 laser={}
 -----particles when something gets hit----
 parts={}
+-----just for test too----------
+orbital_cannon()
+
 end
 
 function _update()
@@ -56,6 +59,8 @@ check_level()
 rotate_ufo()
 wrap_ufo()
 move_ufo()
+--for orbital cannon-----------
+move_orbit()
 
 
 ------for ufo to shoot---------
@@ -66,15 +71,7 @@ ufo_fires()
 timer=rnd(420)
 end
 move_laser()
-
-------particles-----------
-for p in all(parts) do
- p.x+=p.sx
- p.y+=p.sy
- if p.x<0 or p.x>128 or p.y < 0 or p.y > 128
-  then del(parts, p)
- end 
-end 
+asteroid_parts()
 
 for b in all(bullets) do
  b.d -= 1
@@ -91,7 +88,7 @@ for b in all(bullets) do
   then b.y=0 
  end  
 end  
-
+--------------------------------
 
 end 
  
@@ -102,7 +99,10 @@ cls()
 line(lx, ly, nx, ny,7)
 line(rx, ry, nx, ny,7)
 line(lx, ly, rx, ry,7)
-line(ex,ey,tx,ty,9)
+
+if btn(⬆️)
+then  line(ex,ey,tx,ty,9)
+end
 --------draw bullets-----------
 for b in all(bullets) do
 line(b.x,b.y,b.x,b.y)
@@ -155,6 +155,11 @@ for p in all(parts) do
   --1
  end
   
+----orbital cannon time-------
+for o in all(oc) do
+ line(o.x,o.y,o.sx,o.sy,8)  
+end
+
 
 end
 				
@@ -266,7 +271,7 @@ end
 -------------------------------
 repeat
 repeat cx=rnd(128)
-until cx<40 or cx>70
+until cx<20 or cx>100
 repeat cy=rnd(128)
 until cy<40 or cy>80
 rot=rnd(1)
@@ -357,18 +362,34 @@ end
 -------time to move asteroids--
 function move_asteroids()
  for a in all(asteroids) do
-  a.x+=rnd(0.09)
-  a.y+=rnd(0.09)
+  a.x+=rnd(0.1)-0.05
+  a.y+=rnd(0.1)-0.05
+  if a.x < 40
+  then a.x += rnd(0.09)
+  elseif a.x > 80
+  then a.x -= rnd(0.09)
+  end
+  if a.y < 20 
+   then a.y += rnd(0.09)
+  elseif a.y > 80 
+   then a.y -= rnd(0.09)
+  end    
  
  end
 
 end
 
 function asteroid_parts()
- 
+ ------particles-----------
+for p in all(parts) do
+ p.x+=p.sx
+ p.y+=p.sy
+ if p.x<0 or p.x>128 or p.y < 0 or p.y > 128
+  then del(parts, p)
+ end 
+end 
 
 end
-
 
 
 -->8
@@ -476,6 +497,93 @@ function move_laser()
 
 
 end
+
+-->8
+------orbitical cannon----------
+function orbital_cannon()
+oc = {}
+
+spot = 0
+spawn = flr(rnd(4))+1 --up to 4
+direc = flr(rnd(2))+1 --up to 2
+---top spawn
+if spawn == 1 and direc == 1 
+ then ox = 64
+ oy = 0
+ spot_x = 0
+ spot_y = 128
+ move_x=rnd(1)
+ move_y=0
+elseif spawn==1 and direc == 2
+ then ox = 64
+ oy = 0
+ spot_x = 128
+ spot_y = 128
+ move_x=rnd(-1)
+ move_y=0
+--right screen
+elseif spawn == 2 and direc == 1
+ then ox = 128
+ oy = 64
+ spot_x =0
+ spot_y =0
+ move_x=0
+ move_y=rnd(1)
+elseif spawn == 2 and direc == 2
+ then ox = 128
+ oy = 64
+ spot_x = 0
+ spot_y = 128
+ move_x = 0
+ move_y = rnd(-1)
+--bottom screen
+elseif spawn == 3 and direc == 1
+ then ox=64
+ oy = 128
+ spot_x=0
+ spot_y=0
+ move_x = rnd(1)
+ move_y = 0
+elseif spawn == 3 and direc == 2    
+ then ox=64
+ oy =128
+ spot_x=128
+ spot_y=0
+ move_x=rnd(-1)
+ move_y=0
+--left side  
+elseif spawn==4 and direc==1
+ then ox =0
+ oy=64
+ spot_x=128
+ spot_y=0
+ move_x=0
+ move_y=rnd(1)
+elseif spawn == 4 and direc==2
+ then ox=0
+ oy=64
+ spot_x=128
+ spot_y=128
+ move_x=0
+ move_y=rnd(-1)
+end
+
+add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y})  
+ 
+ 
+end 
+ 
+function move_orbit()
+for o in all(oc) do 
+ o.sx+=o.mx
+ o.sy+=o.my
+ if o.sx > 130 or o.sx < -2
+  then del(oc, o)
+ elseif o.sy > 140 or o.sx < -2
+  then del(oc, o) 
+ end
+end
+end  
 
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
