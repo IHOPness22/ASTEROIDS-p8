@@ -25,6 +25,14 @@ fy = 0
 vel_x=0
 vel_y=0
 drag = 0.97
+
+------to test players hitbox--
+test_pr=0
+player_radius = 5
+a_radius = 0
+a_radius = 0
+hit_pr = false
+color_h=1 
 --shooting--------------------
 bullets={}
 speed = 2
@@ -35,7 +43,7 @@ hit = false
 level = 0
 score=0
 -----just for test-----------
-call_ufo()
+--call_ufo()
 ------------------------------
 ----call the ufo's laser------
 laser={}
@@ -161,6 +169,11 @@ for o in all(oc) do
 end
 
 
+if hit_pr == true
+ then print("hit", 20, 20,color_h)
+end 
+
+
 end
 				
 -->8
@@ -173,7 +186,7 @@ if btn(⬇️)
  fx = nx - cen_x
  fy = ny - cen_y
 end 
-
+ 
 --find the backpoint of the ship
 
 --now we finna add rotation---
@@ -237,6 +250,42 @@ elseif cen_y > 128
  then cen_y = 0
 end 
 
+
+
+-----test position to get radius--
+for l in all(laser) do 
+hx=l.x-cen_x
+hy=l.y-cen_y
+ if hx*hx+hy*hy < player_radius*player_radius
+  then hit_pr = true --testing
+  color_h+=1
+ end  
+end
+
+
+----testing collision with asteroids
+for a in all(asteroids) do
+hax=(a.x-cen_x)
+hay=(a.y-cen_y)
+if a.s == 3
+ then a_radius=10
+elseif a.s == 2
+ then a_radius=8
+elseif a.s == 1
+ then a_radius=5  
+end 
+
+total_radius=a_radius+player_radius
+  
+ if (hax*hax+hay*hay)<=total_radius*total_radius 
+  then hit_pr = true
+  color_h += 1
+ end
+ --elseif hax*hax+hay*hay<=player_radius*player_radius and a.s==2
+  
+
+
+end  
 
 end
 -->8
