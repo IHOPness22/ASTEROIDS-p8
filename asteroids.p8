@@ -2,6 +2,8 @@ pico-8 cartridge // http://www.pico-8.com
 version 43
 __lua__
 function _init()
+intermission= true
+duration = 160
 cen_x=64
 cen_y=57
 --these are offsets------------
@@ -37,7 +39,7 @@ color_h=1
 bullets={}
 speed = 2
 --now its time to construct rocks----
-spawn_asteroids()
+--spawn_asteroids()
 hit = false
 ----time to spawn new asteroids-
 level = 0
@@ -50,11 +52,14 @@ laser={}
 -----particles when something gets hit----
 parts={}
 -----just for test too----------
-orbital_cannon()
+--orbital_cannon()
 
 end
 
 function _update()
+if intermission == true
+ then load_level()
+end
 movement()
 shoot()
 acwb()
@@ -173,6 +178,11 @@ if hit_pr == true
  then print("hit", 20, 20,color_h)
 end 
 
+
+----time to put ui for level changes
+if intermission==true
+ then print("level" .. level+1,64,64,7)
+end
 
 end
 				
@@ -446,12 +456,32 @@ end
 function check_level()
  if level == 0 and score >= 5000
   then level+=1
+  intermission = true
+  load_level(level)
  end 
  if level >= 1 and score >= score*(level+1)
   then level+=1
  end 
    
-end   
+end  
+
+function load_level() 
+tick += 1
+if tick >= duration 
+ then intermission=false 
+end 
+if intermission == false 
+ then spawn_level(level) 
+ end
+end
+ 
+  
+function spawn_level(l)
+ if l==0
+  then spawn_asteroids() 
+ end
+end
+    
   
   
 -->8
