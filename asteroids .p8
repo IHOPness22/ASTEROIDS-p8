@@ -3,9 +3,10 @@ version 43
 __lua__
 function _init()
 intermission= true
-duration = 160
+duration = 180
+round=0
 cen_x=64
-cen_y=57
+cen_y=75
 --these are offsets------------
 nose_x=0
 nose_y=-7
@@ -58,8 +59,8 @@ end
 
 function _update()
 if intermission == true
- then load_level()
-end
+ then load_level(level)
+ end
 movement()
 shoot()
 acwb()
@@ -181,7 +182,8 @@ end
 
 ----time to put ui for level changes
 if intermission==true
- then print("level" .. level+1,64,64,7)
+ then rectfill(0,50,128,50+15,0)
+ print("level" .. level+1,55,55,7)
 end
 
 end
@@ -457,29 +459,38 @@ function check_level()
  if level == 0 and score >= 5000
   then level+=1
   intermission = true
-  load_level(level)
- end 
- if level >= 1 and score >= score*(level+1)
+  --load_level(level) 
+ elseif level >= 1 and score >= 5000*(level+1)
   then level+=1
+  intermission = true
+  --load_level(level)   
  end 
    
 end  
 
 function load_level() 
-tick += 1
-if tick >= duration 
+round += 1
+if round >= duration 
  then intermission=false 
 end 
 if intermission == false 
- then spawn_level(level) 
+ then round = 0
+ spawn_level(level) 
  end
 end
  
   
 function spawn_level(l)
  if l==0
-  then spawn_asteroids() 
- end
+  then spawn_asteroids()
+  end 
+ if l==1 --else
+ 	then spawn_asteroids()
+ 	end
+ if l==2 --else
+  then spawn_asteroids()
+		call_ufo()
+		end   	
 end
     
   
