@@ -3,7 +3,7 @@ version 43
 __lua__
 function _init()
 intermission= true
-duration = 180
+duration = 120
 round=0
 cen_x=64
 cen_y=75
@@ -55,6 +55,10 @@ parts={}
 -----just for test too----------
 --orbital_cannon()
 
+
+-----variables for slash ui----
+slash_x=0
+
 end
 
 function _update()
@@ -73,6 +77,7 @@ check_level()
 rotate_ufo()
 wrap_ufo()
 move_ufo()
+ufo_hit_detection()
 --for orbital cannon-----------
 move_orbit()
 
@@ -181,10 +186,19 @@ end
 
 
 ----time to put ui for level changes
-if intermission==true
- then rectfill(0,50,128,50+15,0)
- print("level" .. level+1,55,55,7)
+if (intermission==true and round <= duration-15) 
+ then slash_x += 10
+  
+ rectfill(0,50,slash_x,50+15,8)
+ if slash_x >= 128
+  then print("level" .. level+1,55,55,7)
+ end
 end
+if intermission==false
+ then slash_x = 0
+ end
+--128
+--50+15
 
 end
 				
@@ -588,6 +602,22 @@ function move_laser()
 
 end
 
+function ufo_hit_detection()
+ for b in all(bullets) do
+ for u in all(ufo) do
+ --cant use radius for this one
+ --bc radius handles its orbit
+  local hit_r = 10
+  if (b.x-u.x)^2+(b.y-u.y)^2 < hit_r*hit_r
+    then del(ufo, u)
+    del(bullet, b)
+  end  
+  end
+  end 
+  
+  
+  
+  end 
 -->8
 ------orbitical cannon----------
 function orbital_cannon()
