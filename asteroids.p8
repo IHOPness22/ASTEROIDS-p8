@@ -47,6 +47,7 @@ level = 0
 score=0
 -----just for test-----------
 --call_ufo()
+ufo_hit = false
 ------------------------------
 ----call the ufo's laser------
 laser={}
@@ -200,8 +201,14 @@ if intermission==false
 --128
 --50+15
 
-end
-				
+
+-------particles for alien-----
+--for p in all(parts)
+ ufo_parts()
+--end
+		
+		
+end				
 -->8
 ------------player--------------
 function movement()
@@ -609,7 +616,9 @@ function ufo_hit_detection()
  --bc radius handles its orbit
   local hit_r = 10
   if (b.x-u.x)^2+(b.y-u.y)^2 < hit_r*hit_r
-    then del(ufo, u)
+    then 
+    -----have to make a new particles array 
+    del(ufo, u)
     del(bullet, b)
   end  
   end
@@ -618,6 +627,13 @@ function ufo_hit_detection()
   
   
   end 
+  
+  
+function ufo_parts()
+ --- have to make a new particles array 
+  
+
+end  
 -->8
 ------orbitical cannon----------
 function orbital_cannon()
