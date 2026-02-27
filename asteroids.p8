@@ -53,6 +53,7 @@ ufo_hit = false
 laser={}
 -----particles when something gets hit----
 parts={}
+ufo_parts={}
 -----just for test too----------
 --orbital_cannon()
 
@@ -82,7 +83,7 @@ ufo_hit_detection()
 --for orbital cannon-----------
 move_orbit()
 
-
+the_ufo_parts()
 ------for ufo to shoot---------
 tick+=1
 if tick >= timer
@@ -92,6 +93,7 @@ timer=rnd(420)
 end
 move_laser()
 asteroid_parts()
+
 
 for b in all(bullets) do
  b.d -= 1
@@ -165,7 +167,7 @@ end
 
 --------laser of ufos----------
 for l in all(laser) do
- line(l.x,l.y,l.x,l.y,11)
+ line(l.x,l.y,l.x,l.y,8)
 end
  
  
@@ -204,7 +206,10 @@ if intermission==false
 
 -------particles for alien-----
 --for p in all(parts)
- ufo_parts()
+for up in all(ufo_parts) do
+ line(up.x,up.y,up.x,up.y,11)
+  --1
+ end
 --end
 		
 		
@@ -617,7 +622,9 @@ function ufo_hit_detection()
   local hit_r = 10
   if (b.x-u.x)^2+(b.y-u.y)^2 < hit_r*hit_r
     then 
-    -----have to make a new particles array 
+    for i=1,50 do 
+    add(ufo_parts,{x=u.x,y=u.y,sx=rnd(2)-1,sy=rnd(2)-1})
+    end 
     del(ufo, u)
     del(bullet, b)
   end  
@@ -629,9 +636,15 @@ function ufo_hit_detection()
   end 
   
   
-function ufo_parts()
+function the_ufo_parts()
  --- have to make a new particles array 
-  
+ for up in all(ufo_parts) do
+  up.x += up.sx
+  up.y += up.sy 
+  if up.x<0 or up.x>128 or up.y < 0 or up.y > 128
+  then del(ufo_parts, up)
+ end
+ end
 
 end  
 -->8
