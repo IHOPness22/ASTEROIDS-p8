@@ -370,6 +370,47 @@ until full >= 8
 
 end
 
+----second function for infinite asteroids
+function spawn_asteroids_2()
+rocks={ {x=0,y=-6}, {x=5,y=-2}, {x=4,y=4}, {x=-3,y=5}, {x=-6,y=0}, {x=-4,y=-4} }
+asteroids = {}
+full=0
+radius=0
+test_r = 0
+----find the radius of rock---- 
+----for collision later--------
+for r in all(rocks) do 
+  test_r = ((r.x)^2 + (r.y)^2)
+  if test_r > radius
+   then radius = test_r
+  end
+end  
+-------------------------------
+repeat
+repeat cx=rnd(128)
+until cx<20 or cx>100
+repeat cy=rnd(128)
+until cy<40 or cy>80
+rot=rnd(1)
+rot_speed= rnd(0.01)-0.005
+size = 3 
+add(asteroids,{x=cx,y=cy,r=rot,rs=rot_speed,s=size})
+full+=1
+until full >= 20
+
+end
+
+
+---testing to see if i can add
+---more asteroids without despawning
+---the rest 
+
+function more_asteroids()
+ for i=1,8 do 
+ add(asteroids,{x=cx,y=cy,r=rot,rs=rot_speed,s=size})
+ end 
+end 
+
 
 
 function split_asteroid(x,y)
@@ -451,6 +492,11 @@ function move_asteroids()
  for a in all(asteroids) do
   a.x+=rnd(0.1)-0.05
   a.y+=rnd(0.1)-0.05
+  if level == 1
+   then a.x+=rnd(0.1)-0.05
+  a.y+=rnd(0.1)-0.05
+  end
+  
   if a.x < 40
   then a.x += rnd(0.09)
   elseif a.x > 80
@@ -509,9 +555,10 @@ end
 function spawn_level(l)
  if l==0
   then spawn_asteroids()
+  
   end 
  if l==1 --else
- 	then spawn_asteroids()
+ 	then more_asteroids()
  	end
  if l==2 --else
   then spawn_asteroids()
