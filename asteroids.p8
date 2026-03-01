@@ -60,6 +60,7 @@ ufo_parts={}
 
 -----variables for slash ui----
 slash_x=0
+slash_o=0
 
 end
 
@@ -192,13 +193,17 @@ end
 if (intermission==true and round <= duration-15) 
  then slash_x += 10
   
- rectfill(0,50,slash_x,50+15,8)
+ rectfill(slash_o,50,slash_x,50+15,8)
  if slash_x >= 128
   then print("level" .. level+1,55,55,7)
+  slash_o += 1.5
  end
 end
+
+
 if intermission==false
  then slash_x = 0
+ slash_o = 0
  end
 --128
 --50+15
@@ -406,7 +411,11 @@ end
 ---the rest 
 
 function more_asteroids()
- for i=1,8 do 
+ for i=1,12 do 
+ repeat cx=rnd(128)
+	until cx<20 or cx>100
+	repeat cy=rnd(128)
+	until cy<40 or cy>80
  add(asteroids,{x=cx,y=cy,r=rot,rs=rot_speed,s=size})
  end 
 end 
@@ -561,7 +570,7 @@ function spawn_level(l)
  	then more_asteroids()
  	end
  if l==2 --else
-  then spawn_asteroids()
+  then more_asteroids()
 		call_ufo()
 		end   	
 end
@@ -784,7 +793,8 @@ end
 
 ---if laser alligns with player
 function check_orbit()
- 
+  --for o in all(oc) do 
+   --if (
 end  
 
 
