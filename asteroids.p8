@@ -56,8 +56,17 @@ parts={}
 ufo_parts={}
 -----just for test too----------
 --orbital_cannon()
-
-
+ab_x=0
+ab_y=0
+ap_x=0
+ap_y=0
+ab_ab=0
+proj=0
+closest_x=0
+closest_y=0
+dis_x=0
+dis_y=0
+distance=0
 -----variables for slash ui----
 slash_x=0
 slash_o=0
@@ -83,6 +92,7 @@ move_ufo()
 ufo_hit_detection()
 --for orbital cannon-----------
 move_orbit()
+check_orbit()
 
 the_ufo_parts()
 ------for ufo to shoot---------
@@ -563,7 +573,8 @@ end
   
 function spawn_level(l)
  if l==0
-  then spawn_asteroids()
+  then orbital_cannon()
+  orbital_cannon()
   
   end 
  if l==1 --else
@@ -793,8 +804,29 @@ end
 
 ---if laser alligns with player
 function check_orbit()
-  --for o in all(oc) do 
-   --if (
+  for o in all(oc) do
+   ab_x=o.sx-o.x
+   ab_y=o.sy-o.y
+   ap_x=cen_x-o.x
+   ap_y=cen_y-o.y
+   ab_ab=((ab_x*ab_x)+(ab_y*ab_y))
+   proj=((ab_x*ap_x)+(ab_y*ap_y))/ab_ab
+   if proj < 0
+    then proj = 0
+   end 
+   if proj > 1
+    then proj = 1
+   end
+   closest_x=o.x+proj*(o.sx-o.x)
+   closest_y=o.y+proj*(o.sy-o.y)
+   dis_x=cen_x-closest_x
+   dis_y=cen_y-closest_y
+   distance=sqrt((dis_x)^2+(dis_y)^2)
+   if distance <= player_radius
+    then ----gonna replace this with beam
+    del(oc,o)
+   end   
+  end
 end  
 
 
