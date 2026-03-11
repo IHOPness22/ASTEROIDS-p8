@@ -67,6 +67,8 @@ closest_y=0
 dis_x=0
 dis_y=0
 distance=0
+detected=false
+detect_color = 1
 -----variables for slash ui----
 slash_x=0
 slash_o=0
@@ -190,7 +192,7 @@ for p in all(parts) do
   
 ----orbital cannon time-------
 for o in all(oc) do
- line(o.x,o.y,o.sx,o.sy,1)  
+ line(o.x,o.y,o.sx,o.sy,o.dc)  
 end
 
 
@@ -782,15 +784,18 @@ elseif spawn == 4 and direc==2
  spot_y=128
  move_x=0
  move_y=rnd(-1)
+ detect_color=1
 end
 
-add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y})  
+add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1})  
  
  
 end 
  
 function move_orbit()
 for o in all(oc) do 
+ if detected == false
+ then
  o.sx+=o.mx
  o.sy+=o.my
  if o.sx > 130 or o.sx < -2
@@ -798,6 +803,7 @@ for o in all(oc) do
  elseif o.sy > 140 or o.sx < -2
   then del(oc, o) 
  end
+end
 end
 end  
 
@@ -824,9 +830,17 @@ function check_orbit()
    distance=sqrt((dis_x)^2+(dis_y)^2)
    if distance <= player_radius
     then ----gonna replace this with beam
-    del(oc,o)
+    detected=true
    end   
   end
+  
+  if detected == true 
+  then for o in all(oc) do
+  o.dc=4
+  ---from here we will configure a laser
+  ---to be continued 
+  end 
+  end 
 end  
 
 
