@@ -69,6 +69,8 @@ dis_y=0
 distance=0
 detected=false
 detect_color = 1
+loading = 0
+beam = {}
 -----variables for slash ui----
 slash_x=0
 slash_o=0
@@ -95,6 +97,9 @@ ufo_hit_detection()
 --for orbital cannon-----------
 move_orbit()
 check_orbit()
+flash_orbit()
+oc_fire()
+
 
 the_ufo_parts()
 ------for ufo to shoot---------
@@ -575,7 +580,7 @@ end
   
 function spawn_level(l)
  if l==0
-  then orbital_cannon()
+  then spawn_asteroids()
   orbital_cannon()
   
   end 
@@ -732,6 +737,10 @@ if spawn == 1 and direc == 1
  spot_y = 128
  move_x=rnd(1)
  move_y=0
+ detect_color=1
+ detect=false
+ add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false})  
+ 
 elseif spawn==1 and direc == 2
  then ox = 64
  oy = 0
@@ -739,6 +748,10 @@ elseif spawn==1 and direc == 2
  spot_y = 128
  move_x=rnd(-1)
  move_y=0
+ detect_color=1
+ detect=false
+ add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false})  
+ 
 --right screen
 elseif spawn == 2 and direc == 1
  then ox = 128
@@ -747,6 +760,10 @@ elseif spawn == 2 and direc == 1
  spot_y =0
  move_x=0
  move_y=rnd(1)
+ detect_color=1
+ detect=false
+ add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false})  
+ 
 elseif spawn == 2 and direc == 2
  then ox = 128
  oy = 64
@@ -754,6 +771,10 @@ elseif spawn == 2 and direc == 2
  spot_y = 128
  move_x = 0
  move_y = rnd(-1)
+ detect_color=1
+ detect=false
+ add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false})  
+ 
 --bottom screen
 elseif spawn == 3 and direc == 1
  then ox=64
@@ -762,6 +783,10 @@ elseif spawn == 3 and direc == 1
  spot_y=0
  move_x = rnd(1)
  move_y = 0
+ detect_color=1
+ detect=false
+ add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false})  
+ 
 elseif spawn == 3 and direc == 2    
  then ox=64
  oy =128
@@ -769,6 +794,10 @@ elseif spawn == 3 and direc == 2
  spot_y=0
  move_x=rnd(-1)
  move_y=0
+ detect_color=1
+ detect=false
+ add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false})  
+ 
 --left side  
 elseif spawn==4 and direc==1
  then ox =0
@@ -777,6 +806,10 @@ elseif spawn==4 and direc==1
  spot_y=0
  move_x=0
  move_y=rnd(1)
+ detect_color=1
+ detect=false
+ add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false})  
+ 
 elseif spawn == 4 and direc==2
  then ox=0
  oy=64
@@ -785,22 +818,24 @@ elseif spawn == 4 and direc==2
  move_x=0
  move_y=rnd(-1)
  detect_color=1
-end
-
-add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1})  
+ detect=false
+ add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false})  
  
+end
+fire = false
+
  
 end 
  
 function move_orbit()
 for o in all(oc) do 
- if detected == false
+ if o.d == false
  then
  o.sx+=o.mx
  o.sy+=o.my
- if o.sx > 130 or o.sx < -2
+ if o.sx > 130 or o.sx < -20
   then del(oc, o)
- elseif o.sy > 140 or o.sx < -2
+ elseif o.sy > 140 or o.sy < -20
   then del(oc, o) 
  end
 end
@@ -830,22 +865,51 @@ function check_orbit()
    distance=sqrt((dis_x)^2+(dis_y)^2)
    if distance <= player_radius
     then ----gonna replace this with beam
-    detected=true
+    o.d=true
    end   
   end
   
-  if detected == true 
-  then for o in all(oc) do
-  o.dc=4
+   
+  for o in all(oc) do
+  if o.d == true
+  then o.dc=11
+  end
   ---from here we will configure a laser
   ---to be continued 
+  end  
+end 
+
+function flash_orbit() 
+  for o in all(oc) do
+  if o.d == true
+  then loading+=1
+  if loading%5 == 0
+  then o.dc = 8
+  end
+  if loading >= 30
+  then o.f=true
+  end
   end 
-  end 
-end  
+  end
+end
 
-
-
-
+function oc_fire()
+ for o in all(oc) do 
+  if o.f == true
+   then del(oc,o)
+   add(beam,{x=o.x,y=o.y,dx=dis_x/distance,dy=dis_y/distance,s=2.5})
+   for be in all(beam) do
+   be.x+= be.s*be.dx
+   be.y+= be.s*be.dy
+   if be.y<0 or be.y>128 or be.x<0 or be.x>128
+    then del(be,b)
+   end  
+   end
+   end
+ end
+ 
+end   
+    
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
