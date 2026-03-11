@@ -71,10 +71,16 @@ detected=false
 detect_color = 1
 loading = 0
 beam = {}
+line_x=0
+line_y=0
+line_len=0
+beam_dx=0
+beam_dy=0
+beam_col=8
 -----variables for slash ui----
 slash_x=0
 slash_o=0
-
+par_col=1
 end
 
 function _update()
@@ -99,6 +105,7 @@ move_orbit()
 check_orbit()
 flash_orbit()
 oc_fire()
+move_beam()
 
 
 the_ufo_parts()
@@ -191,7 +198,7 @@ end
  
 ----particles boiiii-----------  
 for p in all(parts) do
- line(p.x,p.y,p.x,p.y,1)
+ line(p.x,p.y,p.x,p.y,par_col)
   --1
  end
   
@@ -199,6 +206,14 @@ for p in all(parts) do
 for o in all(oc) do
  line(o.x,o.y,o.sx,o.sy,o.dc)  
 end
+
+----draw orbital cannon beam---
+for be in all(beam) do
+ printh(be.c)
+ circfill(be.x,be.y,8,beam_col)
+end
+
+
 
 
 if hit_pr == true
@@ -554,27 +569,30 @@ end
 -->8
 -------level-------------------
 function check_level()
- if level == 0 and score >= 5000
+ if intermission==false 
+ then if level == 0 and score >= 5000
   then level+=1
   intermission = true
+  round=0
   --load_level(level) 
  elseif level >= 1 and score >= 5000*(level+1)
   then level+=1
   intermission = true
+  round=0
   --load_level(level)   
  end 
-   
+end   
 end  
 
 function load_level() 
-round += 1
+if intermission == true 
+then round += 1
 if round >= duration 
  then intermission=false 
-end 
-if intermission == false 
- then round = 0
- spawn_level(level) 
- end
+ round = 0 
+ spawn_level(level)
+end
+end
 end
  
   
@@ -586,6 +604,9 @@ function spawn_level(l)
   end 
  if l==1 --else
  	then more_asteroids()
+ 	call_ufo()
+ 	call_ufo()
+ 	orbital_cannon()
  	end
  if l==2 --else
   then more_asteroids()
@@ -888,6 +909,7 @@ function flash_orbit()
   end
   if loading >= 30
   then o.f=true
+  loading=0
   end
   end 
   end
@@ -896,20 +918,28 @@ end
 function oc_fire()
  for o in all(oc) do 
   if o.f == true
-   then del(oc,o)
-   add(beam,{x=o.x,y=o.y,dx=dis_x/distance,dy=dis_y/distance,s=2.5})
-   for be in all(beam) do
+   then line_x=o.sx-o.x
+   line_y=o.sy-o.y
+   line_len=sqrt(line_x^2+line_y^2)
+   beam_dx=line_x/line_len
+   beam_dy=line_y/line_len
+   add(beam,{x=o.x,y=o.y,dx=beam_dx,dy=beam_dy,s=2.5,c=8})
+   del(oc,o)
+   end
+ end
+ 
+end 
+
+function move_beam()
+ for be in all(beam) do
    be.x+= be.s*be.dx
    be.y+= be.s*be.dy
    if be.y<0 or be.y>128 or be.x<0 or be.x>128
     then del(be,b)
    end  
    end
-   end
- end
- 
-end   
-    
+end     
+      
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
