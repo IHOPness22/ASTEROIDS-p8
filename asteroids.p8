@@ -81,9 +81,18 @@ beam_col=8
 slash_x=0
 slash_o=0
 par_col=1
+scene = "menu"
+blink_timer=0
 end
 
 function _update()
+------will be state machine----
+if scene == "menu" then
+ update_menu()
+elseif scene == "game"
+then
+--------of the game-----------
+
 if intermission == true
  then load_level(level)
  end
@@ -136,11 +145,36 @@ for b in all(bullets) do
  end  
 end  
 --------------------------------
-
+end
 end 
  
 
+function update_menu() 
+ blink_timer += 1
+ if blink_timer > 30 then
+ blink_timer = 0
+ end
+ if btnp(❎) then
+  scene="game"
+ end
+
+end
+
+
+function draw_menu()
+cls()
+if blink_timer < 20 then
+print("press ❎ to start",30,90)
+end
+spr(0,0,0,16,16)
+
+end
+
 function _draw()
+if scene=="menu" then
+ draw_menu()
+ elseif scene == "game" then 
+
 cls()
 ---------draw ship--------------
 line(lx, ly, nx, ny,7)
@@ -249,7 +283,7 @@ for up in all(ufo_parts) do
  end
 --end
 		
-		
+end		
 end				
 -->8
 ------------player--------------
@@ -1006,9 +1040,9 @@ __gfx__
 11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111117555555555555555555555555555555555555
 11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111177555555555555555555555555555555555555
 __sfx__
-001a00001a250283502825028250282502825028250283502825028250192501a2501b2501c2501d2501e2501f250202502125022250232502425024250252502625027250282502825028250282501a2501a550
+0016000010650106500f6500f6500f6501065011650136501565017650186501965019650196501765015650156501565017650186501a6501b6501c6501d6501d6501d65033550325503255032550325502f550
 001a00002625027250192501a2502625025250192501a2502625027250192501a25026250252501a250262502725019250192501a2502625025250192501a2502625027250192501a2502625025250192501a250
 __music__
 00 00424344
-00 01424344
+00 05424344
 
