@@ -4,6 +4,8 @@ __lua__
 function _init()
 intermission= true
 duration = 120
+cutscene = "idle"
+launching = 0 
 round=0
 cen_x=64
 cen_y=75
@@ -88,14 +90,14 @@ end
 function _update()
 ------will be state machine----
 if scene == "menu" then
- update_menu()
-elseif scene == "game"
-then
+ update_menu() 
+elseif scene == "game" then
 --------of the game-----------
 
-if intermission == true
+if intermission == true and scene == "game"
  then load_level(level)
  end
+ 
 movement()
 shoot()
 acwb()
@@ -145,8 +147,8 @@ for b in all(bullets) do
  end  
 end  
 --------------------------------
-end
 end 
+end
  
 
 function update_menu() 
@@ -155,7 +157,7 @@ function update_menu()
  blink_timer = 0
  end
  if btnp(❎) then
-  scene="game"
+  scene="lobby"
  end
 
 end
@@ -170,9 +172,55 @@ spr(0,0,0,16,16)
 
 end
 
+
+function draw_cut()
+
+cls(3) 
+movement()
+---------draw ship--------------
+line(lx, ly, nx, ny,7)
+line(rx, ry, nx, ny,7)
+line(lx, ly, rx, ry,7)
+
+if cutscene == "idle" 
+ then print("asteroids",44,10)
+print("press ⬆️ to launch ",0,20)
+print("but theres no going back...",0,30)
+end
+
+if btnp(⬆️) then
+ cutscene = "count"
+end
+
+if cutscene == "count" then 
+ print("launching in ...",0,10) 
+ launching+=1
+ if launching<60 then
+ print("3",70,10) 
+ elseif launching < 120 then
+ print("2",70,10) 
+ elseif launching < 180 then
+ print("1",70,10) 
+ elseif launching >= 180
+ then cutscene = "blast"
+ end
+end
+
+if cutscene == "blast" then
+ print("blastoff!",0,10) 
+ cen_y -= 1
+ line(ex,ey,tx,ty,9)
+end  
+
+end
+
+
+
 function _draw()
 if scene=="menu" then
  draw_menu()
+else if scene == "lobby"
+ then draw_cut() 
  elseif scene == "game" then 
 
 cls()
@@ -256,6 +304,7 @@ end
 
 
 ----time to put ui for level changes
+if scene == "game" then
 if (intermission==true and round <= duration-15) 
  then slash_x += 10
   
@@ -271,6 +320,8 @@ if intermission==false
  then slash_x = 0
  slash_o = 0
  end
+ 
+end 
 --128
 --50+15
 
@@ -283,17 +334,22 @@ for up in all(ufo_parts) do
  end
 --end
 		
-end		
-end				
+end	
+end	
+end
+				
 -->8
 ------------player--------------
 function movement()
 --quick test to make sure rotation
 --is correct
+if scene == "game" then
 if btn(⬇️)
  then a=(a+0.02)%1
  fx = nx - cen_x
  fy = ny - cen_y
+end
+
 end 
  
 --find the backpoint of the ship
@@ -330,7 +386,7 @@ if tick >= timer
  ty+=4
 end 
 
-
+if scene == "game" then
 if btn(⬆️)
 --ships forward direction
 then fx = nx - cen_x
@@ -357,6 +413,8 @@ if cen_y < 0
  then cen_y = 128
 elseif cen_y > 128
  then cen_y = 0
+end
+
 end 
 
 
