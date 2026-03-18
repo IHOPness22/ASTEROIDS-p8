@@ -85,6 +85,9 @@ slash_o=0
 par_col=1
 scene = "menu"
 blink_timer=0
+text_x=30
+text_y=90
+highscore=000
 end
 
 function _update()
@@ -153,9 +156,13 @@ end
 
 function update_menu() 
  blink_timer += 1
- if blink_timer > 30 then
+ if blink_timer > 60 then
  blink_timer = 0
  end
+ text_x += 1
+ if text_x >= 128 
+  then text_x = -20
+ end 
  if btnp(❎) then
   scene="lobby"
  end
@@ -165,8 +172,10 @@ end
 
 function draw_menu()
 cls()
-if blink_timer < 20 then
-print("press ❎ to start",30,90)
+text="press ❎ to start"
+
+if blink_timer < 50 then
+print(text,text_x,text_y)
 end
 spr(0,0,0,16,16)
 
@@ -202,7 +211,8 @@ if cutscene == "count" then
  elseif launching < 180 then
  print("1",70,10) 
  elseif launching >= 180
- then cutscene = "blast"
+ then launching = 0
+ cutscene = "blast"
  end
 end
 
@@ -210,7 +220,61 @@ if cutscene == "blast" then
  print("blastoff!",0,10) 
  cen_y -= 1
  line(ex,ey,tx,ty,9)
+ if cen_y < -5 
+ then scene = "start"
+ end 
 end  
+
+end
+
+function draw_start()
+cls()
+movement()
+shoot()
+---------draw ship--------------
+line(lx, ly, nx, ny,7)
+line(rx, ry, nx, ny,7)
+line(lx, ly, rx, ry,7)
+
+if btn(⬆️)
+then  line(ex,ey,tx,ty,9)
+end
+--------draw bullets-----------
+for b in all(bullets) do
+line(b.x,b.y,b.x,b.y)
+end
+
+for b in all(bullets) do
+ b.d -= 1
+ if b.d <= 0
+  then del(bullets, b)
+ end
+ if b.x < 0
+  then b.x = 128
+ elseif b.x > 128
+  then b.x = 0
+ elseif b.y < 0
+  then b.y = 128
+ elseif b.y > 128 
+  then b.y=0 
+ end  
+end  
+
+
+launching+=1
+if launching < 30
+ then cen_y -= 2
+end  
+
+print("high score: ",0,10)
+print(highscore, 50,10)
+
+print("press ➡️ when your ready",10,40)
+print("to protect earth",10,50)
+
+if btn(➡️) then
+scene = "game"
+end
 
 end
 
@@ -219,8 +283,10 @@ end
 function _draw()
 if scene=="menu" then
  draw_menu()
-else if scene == "lobby"
- then draw_cut() 
+elseif scene == "lobby"
+ then draw_cut()
+elseif  scene == "start"
+ then draw_start()   
  elseif scene == "game" then 
 
 cls()
@@ -336,14 +402,15 @@ for up in all(ufo_parts) do
 		
 end	
 end	
-end
 				
 -->8
 ------------player--------------
 function movement()
 --quick test to make sure rotation
 --is correct
-if scene == "game" then
+
+if scene == "game" or scene == "start" or scene == "start" then
+
 if btn(⬇️)
  then a=(a+0.02)%1
  fx = nx - cen_x
@@ -386,7 +453,7 @@ if tick >= timer
  ty+=4
 end 
 
-if scene == "game" then
+if scene == "game" or scene == "start" or scene == "start" then
 if btn(⬆️)
 --ships forward direction
 then fx = nx - cen_x
@@ -455,6 +522,7 @@ total_radius=a_radius+player_radius
 end  
 
 end
+
 -->8
 ---shooting-------
 function shoot()
