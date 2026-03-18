@@ -5,7 +5,8 @@ function _init()
 intermission= true
 duration = 120
 cutscene = "idle"
-launching = 0 
+launching = 0
+launch = false  
 round=0
 cen_x=64
 cen_y=75
@@ -76,9 +77,11 @@ beam = {}
 line_x=0
 line_y=0
 line_len=0
-beam_dx=0
-beam_dy=0
+beam_dx=0--to calc dir of beam
+beam_dy=0--to calc dir of beam
 beam_col=8
+bex=0 --for collsion on player
+bey=0 --for collision on player
 -----variables for slash ui----
 slash_x=0
 slash_o=0
@@ -197,8 +200,9 @@ print("press ⬆️ to launch ",0,20)
 print("but theres no going back...",0,30)
 end
 
-if btnp(⬆️) then
+if btnp(⬆️) and launch == false then
  cutscene = "count"
+ launch = true
 end
 
 if cutscene == "count" then 
@@ -216,7 +220,7 @@ if cutscene == "count" then
  end
 end
 
-if cutscene == "blast" then
+if cutscene == "blast" and launch == true then
  print("blastoff!",0,10) 
  cen_y -= 1
  line(ex,ey,tx,ty,9)
@@ -236,7 +240,7 @@ line(lx, ly, nx, ny,7)
 line(rx, ry, nx, ny,7)
 line(lx, ly, rx, ry,7)
 
-if btn(⬆️)
+if btn(⬆️)  
 then  line(ex,ey,tx,ty,9)
 end
 --------draw bullets-----------
@@ -262,7 +266,7 @@ end
 
 
 launching+=1
-if launching < 30
+if launching < 30 
  then cen_y -= 2
 end  
 
@@ -363,10 +367,11 @@ end
 
 
 
-
-if hit_pr == true
- then print("hit", 20, 20,color_h)
-end 
+--use a bool hit_pr
+--but dont need it for testing
+--as its a nuisance to check
+ print("hit", 20, 20,color_h)
+ 
 
 
 ----time to put ui for level changes
@@ -491,7 +496,7 @@ for l in all(laser) do
 hx=l.x-cen_x
 hy=l.y-cen_y
  if hx*hx+hy*hy < player_radius*player_radius
-  then hit_pr = true --testing
+  then  --testing
   color_h+=1
  end  
 end
@@ -512,13 +517,20 @@ end
 total_radius=a_radius+player_radius
   
  if (hax*hax+hay*hay)<=total_radius*total_radius 
-  then hit_pr = true
+  then 
   color_h += 1
  end
  --elseif hax*hax+hay*hay<=player_radius*player_radius and a.s==2
-  
+end  
 
-
+---this is for beam radius on player
+for be in all(beam) do 
+ bex=be.x-cen_x
+ bey=be.y-cen_y
+ if (bex*bex+bey*bey)<=(player_radius*8)
+  then  
+  color_h += 1
+ end 
 end  
 
 end
@@ -1098,7 +1110,10 @@ function move_beam()
     then del(be,b)
    end  
    end
-end     
+end   
+
+
+  
       
 __gfx__
 55555555555555571111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
