@@ -2,9 +2,11 @@ pico-8 cartridge // http://www.pico-8.com
 version 43
 __lua__
 function _init()
-intermission= true
+--intermission= true
+
 duration = 120
 cutscene = "idle"
+checkpoint = ""
 launching = 0
 launch = false  
 round=0
@@ -86,11 +88,15 @@ bey=0 --for collision on player
 slash_x=0
 slash_o=0
 par_col=1
+--will be scene == menu when im
+--done debuggin 
 scene = "menu"
 blink_timer=0
 text_x=30
 text_y=90
 highscore=000
+wave_timer = 0
+wave = 0
 end
 
 function _update()
@@ -100,10 +106,10 @@ if scene == "menu" then
 elseif scene == "game" then
 --------of the game-----------
 
-if intermission == true and scene == "game"
- then load_level(level)
- end
- 
+--if intermission == true and scene == "game"
+ --then load_level(level)
+ --end
+gameplay_update() 
 movement()
 shoot()
 acwb()
@@ -111,7 +117,7 @@ asteroid_rotation()
 --update_asteroid_count()-------
 asteroid_wrap()
 move_asteroids()
-check_level()
+--check_level()
 --i guess we makin ufos now-----
 rotate_ufo()
 wrap_ufo()
@@ -231,6 +237,10 @@ end
 
 end
 
+
+
+
+
 function draw_start()
 cls()
 movement()
@@ -278,11 +288,35 @@ print("to protect earth",10,50)
 
 if btn(➡️) then
 scene = "game"
+cutscene = "loading"
 end
 
 end
 
 
+function draw_ui()
+  if cutscene == "loading" then
+--if (intermission==true and round <= duration-15) 
+  slash_x += 10
+
+ rect(slash_o,50,slash_x,50+15,8)
+ if slash_x >= 128
+  then print("level" .. level+1,55,55,7)
+  slash_o += 1.5
+ end
+ end 
+end
+
+
+
+
+function wave_timer_go()
+ wave_timer += 1
+ if wave_timer >= 120
+  then wave_timer = 0
+  cutscene = "level" 
+ end
+end
 
 function _draw()
 if scene=="menu" then
@@ -294,6 +328,7 @@ elseif  scene == "start"
  elseif scene == "game" then 
 
 cls()
+gameplay_draw()
 ---------draw ship--------------
 line(lx, ly, nx, ny,7)
 line(rx, ry, nx, ny,7)
@@ -320,9 +355,11 @@ for i=1,#rocks do
   line(x1,y1,x2,y2,7)
 end
 end 
-print(score,8)
+
 --------display level up-------
-print(level)
+print(score,0,0,8)
+
+
 
 --------draw ufo---------------
 for u in all(ufo) do
@@ -373,28 +410,31 @@ end
  print("hit", 20, 20,color_h)
  
 
+---going top revamp entire level system
+
 
 ----time to put ui for level changes
-if scene == "game" then
-if (intermission==true and round <= duration-15) 
- then slash_x += 10
+--if scene == "game" then
+--if (intermission==true and round <= duration-15) 
+ --then slash_x += 10
   
- rectfill(slash_o,50,slash_x,50+15,8)
- if slash_x >= 128
-  then print("level" .. level+1,55,55,7)
-  slash_o += 1.5
- end
-end
+ --rectfill(slash_o,50,slash_x,50+15,8)
+ --if slash_x >= 128
+  --then print("level" .. level+1,55,55,7)
+  --slash_o += 1.5
+ --end
+--end
 
 
-if intermission==false
- then slash_x = 0
- slash_o = 0
- end
+--if intermission==false
+ --then slash_x = 0
+ --slash_o = 0
+ --end
  
-end 
+--end 
 --128
 --50+15
+
 
 
 -------particles for alien-----
@@ -404,7 +444,10 @@ for up in all(ufo_parts) do
   --1
  end
 --end
-		
+
+
+
+
 end	
 end	
 				
@@ -740,54 +783,83 @@ end
 
 -->8
 -------level-------------------
-function check_level()
- if intermission==false 
- then if level == 0 and score >= 5000
-  then level+=1
-  intermission = true
-  round=0
+--function check_level()
+ --if intermission==false 
+ --then if level == 0 and score >= 5000
+  --then level+=1
+  --intermission = true
+  --round=0
   --load_level(level) 
- elseif level >= 1 and score >= 5000*(level+1)
-  then level+=1
-  intermission = true
-  round=0
+ --elseif level >= 1 and score >= 5000*(level+1)
+  --then level+=1
+  --intermission = true
+  --round=0
   --load_level(level)   
- end 
-end   
-end  
+ --end 
+--end   
+--end  
 
-function load_level() 
-if intermission == true 
-then round += 1
-if round >= duration 
- then intermission=false 
- round = 0 
- spawn_level(level)
-end
-end
-end
+--function load_level() 
+--if intermission == true 
+--then round += 1
+--if round >= duration 
+ --then intermission=false 
+ --round = 0 
+ --spawn_level(level)
+--end
+--end
+--end
  
   
-function spawn_level(l)
- if l==0
-  then spawn_asteroids()
-  orbital_cannon()
+--function spawn_level(l)
+ --if l==0
+  --then spawn_asteroids()
+  --orbital_cannon()
   
-  end 
- if l==1 --else
- 	then more_asteroids()
- 	call_ufo()
- 	call_ufo()
- 	orbital_cannon()
- 	end
- if l==2 --else
-  then more_asteroids()
-		call_ufo()
-		end   	
-end
+  --end 
+ --if l==1 --else
+ 	--then more_asteroids()
+ 	--call_ufo()
+ 	--call_ufo()
+ 	--orbital_cannon()
+ 	--end
+ --if l==2 --else
+  --then more_asteroids()
+		--call_ufo()
+		--end   	
+--end
+
+function gameplay_update()
+ 
+ if cutscene=="loading"
+  then wave_timer_go()
+  end
+ if cutscene=="level"
+  then find_level()
+  end
+ if cutscene=="progression"   
+  then check_level() 
+  end
+end 
+
+
+function gameplay_draw()
+ if cutscene=="loading"
+  then draw_ui()
+ end
+end  
     
   
-  
+function find_level()
+ if level == 0
+ then orbital_cannon()
+ cutscene = "progression"
+ end
+end  
+
+function check_level()
+
+end 
 -->8
 ------------ufo's-------------
 function call_ufo()
