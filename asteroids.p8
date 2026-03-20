@@ -5,7 +5,7 @@ function _init()
 --intermission= true
 
 duration = 120
-cutscene = "idle"
+cutscene = "loading"
 checkpoint = ""
 launching = 0
 launch = false  
@@ -36,7 +36,7 @@ drag = 0.97
 
 ------to test players hitbox--
 test_pr=0
-player_radius = 5
+player_radius = 2
 a_radius = 0
 a_radius = 0
 hit_pr = false
@@ -61,18 +61,18 @@ parts={}
 ufo_parts={}
 -----just for test too----------
 --orbital_cannon()
-ab_x=0
-ab_y=0
-ap_x=0
-ap_y=0
-ab_ab=0
-proj=0
-closest_x=0
-closest_y=0
-dis_x=0
-dis_y=0
-distance=0
-detected=false
+--ab_x=0
+--ab_y=0
+--ap_x=0
+--ap_y=0
+--ab_ab=0
+--proj=0
+--closest_x=0
+--closest_y=0
+--dis_x=0
+--dis_y=0
+--distance=0
+--detected=false
 detect_color = 1
 loading = 0
 beam = {}
@@ -84,13 +84,22 @@ beam_dy=0--to calc dir of beam
 beam_col=8
 bex=0 --for collsion on player
 bey=0 --for collision on player
+
+--orbital timer if player 
+--does not get hit
+orbital_timer=0
+
+--for player hitbox to beam
+ax=0
+ay=0
+
 -----variables for slash ui----
 slash_x=0
 slash_o=0
 par_col=1
 --will be scene == menu when im
 --done debuggin 
-scene = "menu"
+scene = "game"
 blink_timer=0
 text_x=30
 text_y=90
@@ -98,6 +107,7 @@ highscore=000
 wave_timer = 0
 wave = 0
 end
+
 
 function _update()
 ------will be state machine----
@@ -159,9 +169,9 @@ for b in all(bullets) do
  end  
 end  
 --------------------------------
-end 
 end
- 
+end 
+
 
 function update_menu() 
  blink_timer += 1
@@ -409,32 +419,13 @@ end
 --as its a nuisance to check
  print("hit", 20, 20,color_h)
  
-
----going top revamp entire level system
-
-
-----time to put ui for level changes
---if scene == "game" then
---if (intermission==true and round <= duration-15) 
- --then slash_x += 10
-  
- --rectfill(slash_o,50,slash_x,50+15,8)
- --if slash_x >= 128
-  --then print("level" .. level+1,55,55,7)
-  --slash_o += 1.5
- --end
---end
-
-
---if intermission==false
- --then slash_x = 0
- --slash_o = 0
- --end
+ pset(closest_x, closest_y, 8)
+ circ(cen_x, cen_y, player_radius, 11)
  
---end 
---128
---50+15
-
+ for o in all(oc) do
+  if o.hit == true
+  then o.dc=11
+  end
 
 
 -------particles for alien-----
@@ -450,7 +441,7 @@ for up in all(ufo_parts) do
 
 end	
 end	
-				
+end				
 -->8
 ------------player--------------
 function movement()
@@ -997,83 +988,83 @@ direc = flr(rnd(2))+1 --up to 2
 ---top spawn
 if spawn == 1 and direc == 1 
  then ox = 64
- oy = 0
- spot_x = 0
+ oy = 1
+ spot_x = 1
  spot_y = 128
  move_x=rnd(1)
  move_y=0
  detect_color=1
  detect=false
- add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false})  
+ add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false,t=0})  
  
 elseif spawn==1 and direc == 2
  then ox = 64
- oy = 0
+ oy = 1
  spot_x = 128
  spot_y = 128
  move_x=rnd(-1)
  move_y=0
  detect_color=1
  detect=false
- add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false})  
+ add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false,t=0})  
  
 --right screen
 elseif spawn == 2 and direc == 1
  then ox = 128
  oy = 64
- spot_x =0
- spot_y =0
+ spot_x =1
+ spot_y =1
  move_x=0
  move_y=rnd(1)
  detect_color=1
  detect=false
- add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false})  
+ add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false,t=0})  
  
 elseif spawn == 2 and direc == 2
  then ox = 128
  oy = 64
- spot_x = 0
+ spot_x = 1
  spot_y = 128
  move_x = 0
  move_y = rnd(-1)
  detect_color=1
  detect=false
- add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false})  
+ add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false,t=0})  
  
 --bottom screen
 elseif spawn == 3 and direc == 1
  then ox=64
  oy = 128
- spot_x=0
- spot_y=0
+ spot_x=1
+ spot_y=1
  move_x = rnd(1)
  move_y = 0
  detect_color=1
  detect=false
- add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false})  
+ add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false,t=0})  
  
 elseif spawn == 3 and direc == 2    
  then ox=64
  oy =128
  spot_x=128
- spot_y=0
+ spot_y=1
  move_x=rnd(-1)
  move_y=0
  detect_color=1
  detect=false
- add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false})  
+ add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false,t=0})  
  
 --left side  
 elseif spawn==4 and direc==1
  then ox =0
  oy=64
  spot_x=128
- spot_y=0
+ spot_y=1
  move_x=0
  move_y=rnd(1)
  detect_color=1
  detect=false
- add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false})  
+ add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false,t=0})  
  
 elseif spawn == 4 and direc==2
  then ox=0
@@ -1083,8 +1074,9 @@ elseif spawn == 4 and direc==2
  move_x=0
  move_y=rnd(-1)
  detect_color=1
- detect=false
- add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false})  
+ detect=false 
+ hit = false
+ add(oc, {x=ox,y=oy,sx=spot_x,sy=spot_y,mx=move_x,my=move_y,dc=1,d=false,f=false,t=0,hit=false})  
  
 end
 fire = false
@@ -1094,51 +1086,55 @@ end
  
 function move_orbit()
 for o in all(oc) do 
- if o.d == false
+ if o.hit != true
  then
  o.sx+=o.mx
  o.sy+=o.my
- if o.sx > 130 or o.sx < -20
-  then del(oc, o)
- elseif o.sy > 140 or o.sy < -20
-  then del(oc, o) 
- end
+ --if o.sx > 130 or o.sx < -20
+  --then del(oc, o)
+ --elseif o.sy > 140 or o.sy < -20
+  --then del(oc, o) 
+ --end
 end
+
 end
 end  
 
 
 ---if laser alligns with player
 function check_orbit()
-  for o in all(oc) do
-   ab_x=o.sx-o.x
-   ab_y=o.sy-o.y
-   ap_x=cen_x-o.x
-   ap_y=cen_y-o.y
-   ab_ab=((ab_x*ab_x)+(ab_y*ab_y))
-   proj=((ab_x*ap_x)+(ab_y*ap_y))/ab_ab
+  for o in all(oc) do 
+   local ab_x=o.sx-o.x
+   local ab_y=o.sy-o.y
+  
+   local ab_ab=((ab_x*ab_x)+(ab_y*ab_y))
+   --if o.hit != true
+    --then o.hit = false
+   --end 
+     
+   if ab_ab >  0 then 
+   local ap_x=cen_x-o.x
+   local ap_y=cen_y-o.y 
+   local proj=((ab_x*ap_x)+(ab_y*ap_y))/ab_ab
    if proj < 0
     then proj = 0
    end 
    if proj > 1
     then proj = 1
    end
-   closest_x=o.x+proj*(o.sx-o.x)
-   closest_y=o.y+proj*(o.sy-o.y)
-   dis_x=cen_x-closest_x
-   dis_y=cen_y-closest_y
-   distance=sqrt((dis_x)^2+(dis_y)^2)
+   local closest_x=o.x+proj*(ab_x)
+   local closest_y=o.y+proj*(ab_y)
+   local dis_x=cen_x-closest_x
+   local dis_y=cen_y-closest_y
+   local distance=sqrt((dis_x)^2+(dis_y)^2)
+   --ax = cen_x+cos(a)*player_radius
+   --ay = cen_y+sin(a)*player_radius
    if distance <= player_radius
-    then ----gonna replace this with beam
-    o.d=true
+    then o.hit=true
+   end
    end   
-  end
   
    
-  for o in all(oc) do
-  if o.d == true
-  then o.dc=11
-  end
   ---from here we will configure a laser
   ---to be continued 
   end  
@@ -1146,7 +1142,7 @@ end
 
 function flash_orbit() 
   for o in all(oc) do
-  if o.d == true
+  if o.hit == true
   then loading+=1
   if loading%5 == 0
   then o.dc = 8
@@ -1185,7 +1181,12 @@ function move_beam()
 end   
 
 
-  
+function orbit_time()
+ --for o in all(oc) do
+  --orbital_timer += 1
+  --if orbital_timer >= 270
+ --end
+end  
       
 __gfx__
 55555555555555571111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
