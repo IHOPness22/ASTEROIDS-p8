@@ -48,7 +48,7 @@ speed = 2
 --spawn_asteroids()
 hit = false
 ----time to spawn new asteroids-
-level = 0
+level = 1
 score=0
 -----just for test-----------
 --call_ufo()
@@ -311,7 +311,7 @@ function draw_ui()
 
  rect(slash_o,50,slash_x,50+15,8)
  if slash_x >= 128
-  then print("level" .. level+1,55,55,7)
+  then print("level" .. level,55,55,7)
   slash_o += 1.5
  end
  end 
@@ -324,6 +324,8 @@ function wave_timer_go()
  wave_timer += 1
  if wave_timer >= 120
   then wave_timer = 0
+  slash_o = 0
+  slash_x = 0
   cutscene = "level" 
  end
 end
@@ -389,6 +391,15 @@ for i=1,#ship do
 end
 end
 
+-------particles for alien-----
+--for p in all(parts)
+for up in all(ufo_parts) do
+ line(up.x,up.y,up.x,up.y,11)
+  --1
+ end
+
+
+
 --------laser of ufos----------
 for l in all(laser) do
  line(l.x,l.y,l.x,l.y,8)
@@ -426,22 +437,14 @@ end
   if o.hit == true
   then o.dc=11
   end
-
-
--------particles for alien-----
---for p in all(parts)
-for up in all(ufo_parts) do
- line(up.x,up.y,up.x,up.y,11)
-  --1
  end
---end
 
 
 
 
 end	
 end	
-end				
+				
 -->8
 ------------player--------------
 function movement()
@@ -742,6 +745,9 @@ function move_asteroids()
   if level == 1
    then a.x+=rnd(0.1)-0.05
   a.y+=rnd(0.1)-0.05
+  elseif level == 2
+   then a.x+=rnd(0.2)-0.05
+  a.y+=rnd(0.2)-0.05 
   end
   
   if a.x < 40
@@ -842,14 +848,27 @@ end
     
   
 function find_level()
- if level == 0
- then orbital_cannon()
- cutscene = "progression"
+ --if level == ((level-1)%20)+1
+ if level == 1
+ then spawn_asteroids()
+ 
+ elseif level == 2
+ then more_asteroids()
+
+ elseif level == 3
+ then spawn_asteroids()
+ call_ufo()
+
  end
+ cutscene = "progression"
 end  
 
 function check_level()
-
+ if #asteroids == 0 and #ufo == 0
+  then level += 1
+  cutscene = "loading"
+ end
+ 
 end 
 -->8
 ------------ufo's-------------
