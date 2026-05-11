@@ -852,6 +852,7 @@ function find_level()
  if level == 1
  then spawn_asteroids()
  
+ 
  elseif level == 2
  then more_asteroids()
 
@@ -864,11 +865,17 @@ function find_level()
 end  
 
 function check_level()
- if #asteroids == 0 and #ufo == 0
+ if ufo == nil then
+  ufo = {}
+ end
+ if asteroids == nil then
+  asteroids = {} 
+ end  
+ if #asteroids == 0 and #ufo == 0 
   then level += 1
   cutscene = "loading"
  end
- 
+  
 end 
 -->8
 ------------ufo's-------------
