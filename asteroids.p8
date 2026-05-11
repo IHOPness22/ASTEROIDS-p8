@@ -859,6 +859,37 @@ function find_level()
  elseif level == 3
  then spawn_asteroids()
  call_ufo()
+ 
+ elseif level == 4
+ then spawn_asteroids()
+ orbital_cannon()
+ 
+ elseif level == 5
+ then spawn_asteroids_2()
+ 
+ elseif level == 6
+ then orbital_cannon()
+ call_ufo()
+ spawn_asteroids()
+ 
+ elseif level == 7
+ then call_ufo()
+ spawn_asteroids_2()
+ 
+ elseif level == 8
+ then more_asteroids()
+ orbital_cannon()
+ 
+ elseif level == 9
+ then orbital_cannon()
+ call_ufo()
+ orbital_cannon()
+ 
+ elseif level == 10 
+ then orbital_cannon()
+ call_ufo()
+ orbital_cannon()
+ 
 
  end
  cutscene = "progression"
@@ -870,13 +901,25 @@ function check_level()
  end
  if asteroids == nil then
   asteroids = {} 
- end  
- if #asteroids == 0 and #ufo == 0 
+ end
+ if oc == nil then 
+  oc = {}
+ end    
+ if #asteroids == 0 and #ufo == 0 and #oc == 0
   then level += 1
-  cutscene = "loading"
+  if level != 10
+   then cutscene = "loading"
+  else victory_demo()
+  end 
  end
   
-end 
+end
+
+
+function victory_demo()
+  
+
+end  
 -->8
 ------------ufo's-------------
 function call_ufo()
