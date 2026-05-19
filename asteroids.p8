@@ -49,6 +49,7 @@ speed = 2
 hit = false
 ----time to spawn new asteroids-
 level = 1
+display_level = level
 score=0
 -----just for test-----------
 --call_ufo()
@@ -311,7 +312,7 @@ function draw_ui()
 
  rect(slash_o,50,slash_x,50+15,8)
  if slash_x >= 128
-  then print("level" .. level,55,55,7)
+  then print("level" .. display_level,55,55,7)
   slash_o += 1.5
  end
  end 
@@ -369,7 +370,7 @@ end
 end 
 
 --------display level up-------
-print(score,0,0,8)
+print(score,2,0,8)
 
 
 
@@ -876,6 +877,7 @@ function find_level()
  then call_ufo()
  spawn_asteroids_2()
  
+ 
  elseif level == 8
  then more_asteroids()
  orbital_cannon()
@@ -907,6 +909,7 @@ function check_level()
  end    
  if #asteroids == 0 and #ufo == 0 and #oc == 0
   then level += 1
+  display_level += 1
   if level != 10
    then cutscene = "loading"
   else victory_demo()
