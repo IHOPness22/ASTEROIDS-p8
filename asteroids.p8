@@ -370,7 +370,9 @@ end
 end 
 
 --------display level up-------
-print(score,2,0,8)
+--print(score,2,0,8)
+--its bugged so i need to go fix it 
+draw_score()
 
 
 
@@ -698,11 +700,14 @@ local hit_r = radius * 3
   local ay = a.y
   if a.s == 3
   then split_asteroid(ax,ay)
-  score+=20
+  --score+=20
+  add_score(20)
   elseif a.s == 2
   then split_med_asteroid(ax,ay)
-  score+=50
-  else score+=100
+  --score+=50
+  add_score(50)
+  else --score+=100
+  add_score(100)
   end
   break
  end  
@@ -923,6 +928,24 @@ function victory_demo()
   
 
 end  
+
+
+function add_score(s)
+  score += s * 0x0.0001
+
+end 
+
+function draw_score()
+  --tostr(score,2) gives you the real
+  local s = tostr(score,2)
+  --if #s < 3
+  
+  --pad to 6 digits for 999999
+  while #s < 6 do s=" "..s end
+  print(s,60,6,7)
+  
+end   
+   
 -->8
 ------------ufo's-------------
 function call_ufo()
