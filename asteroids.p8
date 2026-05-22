@@ -13,9 +13,12 @@ round=0
 cen_x=64
 cen_y=75
 dead = false
-revive_wait= 360
+revive_wait= 200
 invincible = false
-invinc_timer = 420
+invinc_timer = 300
+ship_color=7
+invinc_color = 9 --this is just
+--to remember which color for invinc
 --these are offsets------------
 nose_x=0
 nose_y=-7
@@ -151,6 +154,9 @@ the_ufo_parts()
 move_player_parts()
 if dead then
 revive_timer()
+end
+if invincible then
+invinc_time()
 end
 --revive_timer()
 ------for ufo to shoot---------
@@ -354,9 +360,9 @@ cls()
 gameplay_draw()
 ---------draw ship--------------
 if not dead then
-line(lx, ly, nx, ny,7)
-line(rx, ry, nx, ny,7)
-line(lx, ly, rx, ry,7)
+line(lx, ly, nx, ny,ship_color)
+line(rx, ry, nx, ny,ship_color)
+line(lx, ly, rx, ry,ship_color)
 
 
 if btn(⬆️)
@@ -550,6 +556,7 @@ end
 end 
 
 
+if invincible == false then
 
 -----test position to get radius--
 for l in all(laser) do 
@@ -598,6 +605,9 @@ for be in all(beam) do
  end 
 end
 
+end --and this is specifically
+--for if invincibility 
+
 end --this end specifically
 --for if player is not dead
   
@@ -623,24 +633,29 @@ end
 function revive_timer()
  revive_wait -= 1
  if revive_wait <= 0
- then revive_wait = 360
+ then revive_wait = 200
  spawn_and_invinc()
  end
 
 end 
 
 function spawn_and_invinc()
+ cen_x = 64
+ cen_y = 75
  dead = false
  invincible = true
- --cen_x = 64
- --cen_y = 75
- invinc_time()
 end
 
 function invinc_time()
  invinc_timer -= 1
+ if invinc_timer%3 == 0
+  then ship_color = 9
+ else ship_color = 7
+ end 
  if invinc_timer <= 0
- then invincible = false
+ then invinc_timer = 300
+ invincible = false
+ ship_color = 7
  end
 end
 
