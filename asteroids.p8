@@ -12,6 +12,7 @@ launch = false
 round=0
 cen_x=64
 cen_y=75
+dead = false
 --these are offsets------------
 nose_x=0
 nose_y=-7
@@ -60,6 +61,7 @@ laser={}
 -----particles when something gets hit----
 parts={}
 ufo_parts={}
+player_parts={}
 -----just for test too----------
 --orbital_cannon()
 --ab_x=0
@@ -120,8 +122,8 @@ elseif scene == "game" then
 --if intermission == true and scene == "game"
  --then load_level(level)
  --end
-gameplay_update() 
-movement()
+gameplay_update()
+movement() 
 shoot()
 acwb()
 asteroid_rotation()
@@ -143,6 +145,7 @@ move_beam()
 
 
 the_ufo_parts()
+move_player_parts()
 ------for ufo to shoot---------
 tick+=1
 if tick >= timer
@@ -343,9 +346,11 @@ elseif  scene == "start"
 cls()
 gameplay_draw()
 ---------draw ship--------------
+if not dead then
 line(lx, ly, nx, ny,7)
 line(rx, ry, nx, ny,7)
 line(lx, ly, rx, ry,7)
+
 
 if btn(⬆️)
 then  line(ex,ey,tx,ty,9)
@@ -354,6 +359,14 @@ end
 for b in all(bullets) do
 line(b.x,b.y,b.x,b.y)
 end
+
+end --for if not dead
+
+if dead then
+ for pp in all(player_parts) do
+ line(pp.x,pp.y,pp.x,pp.y,7)
+ end
+end  
 --------draw asteroids---------
 for a in all(asteroids) do
 for i=1,#rocks do
@@ -433,8 +446,8 @@ end
 --as its a nuisance to check
  print("hit", 20, 20,color_h)
  
- pset(closest_x, closest_y, 8)
- circ(cen_x, cen_y, player_radius, 11)
+ --pset(closest_x, closest_y, 8)
+ --circ(cen_x, cen_y, player_radius, 11)
  
  for o in all(oc) do
   if o.hit == true
@@ -453,8 +466,8 @@ end
 function movement()
 --quick test to make sure rotation
 --is correct
-
-if scene == "game" or scene == "start" or scene == "start" then
+if dead == false then
+if scene == "game" or scene == "start" then
 
 if btn(⬇️)
  then a=(a+0.02)%1
@@ -538,6 +551,8 @@ hy=l.y-cen_y
  if hx*hx+hy*hy < player_radius*player_radius
   then  --testing
   color_h+=1
+  dead = true
+  kill_player()
  end  
 end
 
@@ -559,6 +574,8 @@ total_radius=a_radius+player_radius
  if (hax*hax+hay*hay)<=total_radius*total_radius 
   then 
   color_h += 1
+  dead = true
+  kill_player()
  end
  --elseif hax*hax+hay*hay<=player_radius*player_radius and a.s==2
 end  
@@ -569,11 +586,40 @@ for be in all(beam) do
  bey=be.y-cen_y
  if (bex*bex+bey*bey)<=(player_radius*8)
   then  
-  color_h += 1
+  dead = true 
+  kill_player()
  end 
-end  
+end
+
+end --this end specifically
+--for if player is not dead
+  
+end
+
+function kill_player()
+	death_animation()
+
+end 
+
+
+function death_animation()
+ for i=1,50 do 
+    add(player_parts,{x=cen_x,y=cen_y,sx=rnd(2)-1,sy=rnd(2)-1})
+    end
+ --need to add a revive function    
 
 end
+
+function move_player_parts()
+	for pp in all(player_parts) do
+	 pp.x += pp.sx
+	 pp.y += pp.sy
+	 if pp.x<0 or pp.x>128 or pp.y<0 or pp.y>128
+	 then del(player_parts, pp)
+	 end
+	end  
+end 
+
 
 -->8
 ---shooting-------
@@ -786,51 +832,6 @@ end
 
 -->8
 -------level-------------------
---function check_level()
- --if intermission==false 
- --then if level == 0 and score >= 5000
-  --then level+=1
-  --intermission = true
-  --round=0
-  --load_level(level) 
- --elseif level >= 1 and score >= 5000*(level+1)
-  --then level+=1
-  --intermission = true
-  --round=0
-  --load_level(level)   
- --end 
---end   
---end  
-
---function load_level() 
---if intermission == true 
---then round += 1
---if round >= duration 
- --then intermission=false 
- --round = 0 
- --spawn_level(level)
---end
---end
---end
- 
-  
---function spawn_level(l)
- --if l==0
-  --then spawn_asteroids()
-  --orbital_cannon()
-  
-  --end 
- --if l==1 --else
- 	--then more_asteroids()
- 	--call_ufo()
- 	--call_ufo()
- 	--orbital_cannon()
- 	--end
- --if l==2 --else
-  --then more_asteroids()
-		--call_ufo()
-		--end   	
---end
 
 function gameplay_update()
  
@@ -890,12 +891,15 @@ function find_level()
  elseif level == 9
  then orbital_cannon()
  call_ufo()
- orbital_cannon()
+ spawn_asteroids()
  
  elseif level == 10 
  then orbital_cannon()
  call_ufo()
- orbital_cannon()
+ spawn_asteroids()
+ 
+ 
+ 
  
 
  end
@@ -915,19 +919,13 @@ function check_level()
  if #asteroids == 0 and #ufo == 0 and #oc == 0
   then level += 1
   display_level += 1
-  if level != 10
-   then cutscene = "loading"
-  else victory_demo()
+  if level > 10
+  then level = 5
   end 
+  cutscene = "loading"
  end
   
-end
-
-
-function victory_demo()
-  
-
-end  
+end 
 
 
 function add_score(s)
@@ -942,7 +940,7 @@ function draw_score()
   
   --pad to 6 digits for 999999
   while #s < 6 do s=" "..s end
-  print(s,60,6,7)
+  print(s,3,2,8)
   
 end   
    
