@@ -400,7 +400,8 @@ end
 --its bugged so i need to go fix it 
 draw_score()
 
-
+--fps
+print(stat(1),0,8,7)
 
 --------draw ufo---------------
 for u in all(ufo) do
@@ -451,13 +452,6 @@ for be in all(beam) do
  printh(be.c)
  circfill(be.x,be.y,8,beam_col)
 end
-
-
-
---use a bool hit_pr
---but dont need it for testing
---as its a nuisance to check
- print("hit", 20, 20,color_h)
  
  --pset(closest_x, closest_y, 8)
  --circ(cen_x, cen_y, player_radius, 11)
@@ -468,6 +462,15 @@ end
   end
  end
 
+
+ --need this to test colliison
+ -- of ateroids 
+ for r in all(rocks) do 
+ for a in all(asteroids) do
+  test_r = ((r.x)^2 + (r.y)^2)
+  circ(a.x, a.y, test_r, 8)
+ end
+ end
 
 
 
@@ -564,7 +567,6 @@ hx=l.x-cen_x
 hy=l.y-cen_y
  if hx*hx+hy*hy < player_radius*player_radius
   then  --testing
-  color_h+=1
   dead = true
   death_animation()
  end  
@@ -587,7 +589,6 @@ total_radius=a_radius+player_radius
   
  if (hax*hax+hay*hay)<=total_radius*total_radius 
   then 
-  color_h += 1
   dead = true
   death_animation()
  end
@@ -615,7 +616,7 @@ end
 
 
 function death_animation()
- for i=1,50 do 
+ for i=1,25 do 
     add(player_parts,{x=cen_x,y=cen_y,sx=rnd(2)-1,sy=rnd(2)-1})
     end    
 end
@@ -731,7 +732,7 @@ rot_speed= rnd(0.01)-0.005
 size = 3 
 add(asteroids,{x=cx,y=cy,r=rot,rs=rot_speed,s=size})
 full+=1
-until full >= 20
+until full >= 10
 
 end
 
@@ -763,7 +764,7 @@ end
 end
 
 function split_med_asteroid(x,y)
-for i=1,3 do 
+for i=1,2 do 
 add(asteroids,{x=x+rnd(60)-30,y=y+rnd(60)-30,r=rnd(1),rs=rnd(0.01)-0.002,s=1})
 end
 
@@ -779,7 +780,7 @@ local hit_r = radius * 3
  if ((b.x-a.x)^2 + (b.y-a.y)^2) <= hit_r
   then del(bullets, b)
   del(asteroids,a)
-  for i=1, 50 do
+  for i=1, 5 do
   add(parts,{x=a.x,y=a.y,sx=rnd(2)-1,sy=rnd(2)-1})
   end
   local ax = a.x
@@ -1085,7 +1086,7 @@ function ufo_hit_detection()
   local hit_r = 10
   if (b.x-u.x)^2+(b.y-u.y)^2 < hit_r*hit_r
     then 
-    for i=1,50 do 
+    for i=1,10 do 
     add(ufo_parts,{x=u.x,y=u.y,sx=rnd(2)-1,sy=rnd(2)-1})
     end 
     del(ufo, u)
