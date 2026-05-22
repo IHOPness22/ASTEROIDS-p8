@@ -13,6 +13,9 @@ round=0
 cen_x=64
 cen_y=75
 dead = false
+revive_wait= 360
+invincible = false
+invinc_timer = 420
 --these are offsets------------
 nose_x=0
 nose_y=-7
@@ -146,6 +149,10 @@ move_beam()
 
 the_ufo_parts()
 move_player_parts()
+if dead then
+revive_timer()
+end
+--revive_timer()
 ------for ufo to shoot---------
 tick+=1
 if tick >= timer
@@ -552,7 +559,7 @@ hy=l.y-cen_y
   then  --testing
   color_h+=1
   dead = true
-  kill_player()
+  death_animation()
  end  
 end
 
@@ -575,7 +582,7 @@ total_radius=a_radius+player_radius
   then 
   color_h += 1
   dead = true
-  kill_player()
+  death_animation()
  end
  --elseif hax*hax+hay*hay<=player_radius*player_radius and a.s==2
 end  
@@ -587,27 +594,20 @@ for be in all(beam) do
  if (bex*bex+bey*bey)<=(player_radius*8)
   then  
   dead = true 
-  kill_player()
+  death_animation()
  end 
 end
 
 end --this end specifically
 --for if player is not dead
   
-end
-
-function kill_player()
-	death_animation()
-
 end 
 
 
 function death_animation()
  for i=1,50 do 
     add(player_parts,{x=cen_x,y=cen_y,sx=rnd(2)-1,sy=rnd(2)-1})
-    end
- --need to add a revive function    
-
+    end    
 end
 
 function move_player_parts()
@@ -618,7 +618,32 @@ function move_player_parts()
 	 then del(player_parts, pp)
 	 end
 	end  
+end
+
+function revive_timer()
+ revive_wait -= 1
+ if revive_wait <= 0
+ then revive_wait = 360
+ spawn_and_invinc()
+ end
+
 end 
+
+function spawn_and_invinc()
+ dead = false
+ invincible = true
+ --cen_x = 64
+ --cen_y = 75
+ invinc_time()
+end
+
+function invinc_time()
+ invinc_timer -= 1
+ if invinc_timer <= 0
+ then invincible = false
+ end
+end
+
 
 
 -->8
