@@ -115,6 +115,7 @@ text_y=90
 highscore=000
 wave_timer = 0
 wave = 0
+reason = "l"
 end
 
 
@@ -148,6 +149,7 @@ check_orbit()
 flash_orbit()
 oc_fire()
 move_beam()
+orbit_time()
 
 
 the_ufo_parts()
@@ -464,18 +466,31 @@ end
 
 
  --need this to test colliison
- -- of ateroids 
+ -- of ateroids
+ --these are all my debuggin
+ --glitch tests 
  for r in all(rocks) do 
  for a in all(asteroids) do
-  test_r = ((r.x)^2 + (r.y)^2)
+  test_r = sqrt((r.x)^2 + (r.y)^2)
   circ(a.x, a.y, test_r, 8)
  end
  end
-
-
+ 
+ for b in all(beam) do
+  circ(b.x,b.y,playertobeam,9)
+  line(b.x,b.y,cen_x,cen_y)
+ end 
+ 
+ print(reason)
+ 
 
 end	
-end	
+end
+
+
+
+
+	
 				
 -->8
 ------------player--------------
@@ -567,6 +582,7 @@ hx=l.x-cen_x
 hy=l.y-cen_y
  if hx*hx+hy*hy < player_radius*player_radius
   then  --testing
+  reason = "alien"
   dead = true
   death_animation()
  end  
@@ -588,9 +604,11 @@ end
 total_radius=a_radius+player_radius
   
  if (hax*hax+hay*hay)<=total_radius*total_radius 
-  then 
+  then
+  reason = "asteroid" 
   dead = true
   death_animation()
+
  end
  --elseif hax*hax+hay*hay<=player_radius*player_radius and a.s==2
 end  
@@ -599,10 +617,15 @@ end
 for be in all(beam) do 
  bex=be.x-cen_x
  bey=be.y-cen_y
- if (bex*bex+bey*bey)<=(player_radius*8)
+ beam_radius=10
+ playertobeam = player_radius+beam_radius
+ if (be.x*be.x+be.y*be.y) <= playertobeam
   then  
+  reason = "orbital"
+  del(be,beam)
   dead = true 
   death_animation()
+ 
  end 
 end
 
@@ -616,6 +639,7 @@ end
 
 
 function death_animation()
+ print("death animation called")
  for i=1,25 do 
     add(player_parts,{x=cen_x,y=cen_y,sx=rnd(2)-1,sy=rnd(2)-1})
     end    
@@ -899,6 +923,7 @@ function find_level()
  --if level == ((level-1)%20)+1
  if level == 1
  then spawn_asteroids()
+ orbital_cannon()
  
  
  elseif level == 2
@@ -1241,7 +1266,7 @@ function check_orbit()
    local ab_x=o.sx-o.x
    local ab_y=o.sy-o.y
   
-   local ab_ab=((ab_x*ab_x)+(ab_y*ab_y))
+   local ab_ab= (ab_x*ab_x)+(ab_y*ab_y)
    --if o.hit != true
     --then o.hit = false
    --end 
@@ -1309,17 +1334,24 @@ function move_beam()
    be.x+= be.s*be.dx
    be.y+= be.s*be.dy
    if be.y<0 or be.y>128 or be.x<0 or be.x>128
-    then del(be,b)
+    then del(beam,be) --the right order
    end  
-   end
+ end
 end   
 
 
 function orbit_time()
- --for o in all(oc) do
-  --orbital_timer += 1
-  --if orbital_timer >= 270
- --end
+ for be in all(beam) do
+  orbital_timer += 1
+  if orbital_timer >= 5
+   then print("beam gone")
+   orbital_timer = 0
+   del(be,beam)
+   for o in all(oc) do
+   del(o,oc)
+   end  
+  end
+ end
 end  
       
 __gfx__
