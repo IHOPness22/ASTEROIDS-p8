@@ -5,7 +5,8 @@ function _init()
 --intermission= true
 
 duration = 120
-cutscene = "loading"
+--cutscene = "loading"
+--cutscene = "idle"
 checkpoint = ""
 launching = 0
 launch = false  
@@ -58,6 +59,8 @@ hit = false
 level = 1
 display_level = level
 score=0
+best_score=0
+lives = 3
 -----just for test-----------
 --call_ufo()
 ufo_hit = false
@@ -108,7 +111,7 @@ slash_o=0
 par_col=1
 --will be scene == menu when im
 --done debuggin 
-scene = "game"
+scene = "menu"
 blink_timer=0
 text_x=30
 text_y=90
@@ -201,7 +204,7 @@ function update_menu()
   then text_x = -20
  end 
  if btnp(❎) then
-  scene="lobby"
+  scene="start" --remeber
  end
 
 end
@@ -235,7 +238,8 @@ print("but theres no going back...",0,30)
 end
 
 if btnp(⬆️) and launch == false then
- cutscene = "count"
+ --cutscene = "count"
+ cutscene = "start"
  launch = true
 end
 
@@ -302,17 +306,29 @@ for b in all(bullets) do
  end  
 end  
 
-
-launching+=1
-if launching < 30 
- then cen_y -= 2
-end  
+--launching+=1
+--if launching < 30 
+ --then cen_y -= 2
+--end  
+highscore = best_score
+local s = tostr(best_score,2)
 
 print("high score: ",0,10)
-print(highscore, 50,10)
+while #s < 6 do s=" "..s end
+  print(s,45,10)
+ --" "..s
+
+
+if highscore != 0 
+then print("welcome back traveler")
+else print("welcome!",10,30)
+end
 
 print("press ➡️ when your ready",10,40)
 print("to protect earth",10,50)
+
+print("tip: for every round change",10,100)
+print("stay in the middle ^&^",10,110)
 
 if btn(➡️) then
 scene = "game"
@@ -402,7 +418,7 @@ end
 draw_score()
 
 --fps
-print(stat(1),0,8,7)
+--print(stat(1),0,8,7)
 
 --------draw ufo---------------
 for u in all(ufo) do
@@ -462,25 +478,29 @@ end
   then o.dc=11
   end
  end
-
+ 
+--display lives
+for i=0, 2 do
+ line(0+i*8,110,5+i*8,110,13)
+ line(0+i*8,110,3+i*8,100)
+ line(5+i*8,110,3+i*8,100) 
+end
 
  --need this to test colliison
  -- of ateroids
  --these are all my debuggin
  --glitch tests 
- for r in all(rocks) do 
- for a in all(asteroids) do
-  test_r = sqrt((r.x)^2 + (r.y)^2)
-  circ(a.x, a.y, a_radius, 8)
- end
- end
+ --for r in all(rocks) do 
+ --for a in all(asteroids) do
+  --test_r = sqrt((r.x)^2 + (r.y)^2)
+  --circ(a.x, a.y, a_radius, 8)
+ --end
+ --end
  
- for b in all(beam) do
-  circ(b.x,b.y,playertobeam,9)
-  line(b.x,b.y,cen_x,cen_y)
- end 
- 
- print(reason)
+ --for b in all(beam) do
+  --circ(b.x,b.y,playertobeam,9)
+  --line(b.x,b.y,cen_x,cen_y)
+ --end 
  
 
 end	
@@ -993,7 +1013,6 @@ end
 
 function add_score(s)
   score += s * 0x0.0001
-
 end 
 
 function draw_score()
@@ -1005,7 +1024,11 @@ function draw_score()
   while #s < 6 do s=" "..s end
   print(s,3,2,8)
   
-end   
+end 
+
+
+  
+   
    
 -->8
 ------------ufo's-------------
