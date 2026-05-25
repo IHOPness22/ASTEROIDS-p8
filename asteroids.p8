@@ -504,6 +504,9 @@ end
  --end 
  if lives == 0 
  then print("game over",50,50,8)
+ if score <= 0
+ then print("no points, then no exit.",30,60,8)
+ end 
  if new_score == true
   
   then local z = tostr(highscore,2)
@@ -511,8 +514,13 @@ end
   while #z < 6 do z=" "..z end 
  print("new score: ",30,57,8)
    print(z,70,57,8)
- --print("press ➡️ to reset",40,60)
- end
+   print("press ❎ to reset",40,100)
+   if btn(❎) 
+   then scene = "start"
+   reset_scene()
+   
+   end
+   end
  end
  
 end	
@@ -1060,7 +1068,19 @@ function game_over()
  new_score=true
  end 
 end
- 
+
+function reset_scene()
+ clear_level()
+ new_score = false 
+ dead = false
+ lives = 3
+end 
+
+function clear_level()
+  while #asteroids > 0 do
+   del(asteroids, asteroids[1])
+  end 
+end  
 
 
   
