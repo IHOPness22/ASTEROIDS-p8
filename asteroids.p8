@@ -60,7 +60,8 @@ level = 1
 display_level = level
 score=0
 best_score=0
-lives = 3
+--lives = 3
+lives = 1
 -----just for test-----------
 --call_ufo()
 ufo_hit = false
@@ -119,6 +120,7 @@ highscore=000
 wave_timer = 0
 wave = 0
 reason = "l"
+new_score = false
 end
 
 
@@ -204,7 +206,7 @@ function update_menu()
   then text_x = -20
  end 
  if btnp(❎) then
-  scene="start" --remeber
+  scene="start" 
  end
 
 end
@@ -310,7 +312,7 @@ end
 --if launching < 30 
  --then cen_y -= 2
 --end  
-highscore = best_score
+
 local s = tostr(best_score,2)
 
 print("high score: ",0,10)
@@ -325,7 +327,6 @@ else print("welcome!",10,30)
 end
 
 print("press ➡️ when your ready",10,40)
-print("to protect earth",10,50)
 
 print("tip: for every round change",10,100)
 print("stay in the middle ^&^",10,110)
@@ -480,7 +481,7 @@ end
  end
  
 --display lives
-for i=0, 2 do
+for i=1, lives do
  line(0+i*8,110,5+i*8,110,13)
  line(0+i*8,110,3+i*8,100)
  line(5+i*8,110,3+i*8,100) 
@@ -501,8 +502,19 @@ end
   --circ(b.x,b.y,playertobeam,9)
   --line(b.x,b.y,cen_x,cen_y)
  --end 
+ if lives == 0 
+ then print("game over",50,50,8)
+ if new_score == true
+  
+  then local z = tostr(highscore,2)
+  
+  while #z < 6 do z=" "..z end 
+ print("new score: ",30,57,8)
+   print(z,70,57,8)
+ --print("press ➡️ to reset",40,60)
+ end
+ end
  
-
 end	
 end
 
@@ -603,7 +615,9 @@ hy=l.y-cen_y
   then  --testing
   reason = "alien"
   dead = true
+  life_taken()
   death_animation()
+  check_gameover()
  end  
 end
 
@@ -626,7 +640,9 @@ total_radius=a_radius+player_radius
   then
   reason = "asteroid" 
   dead = true
+  life_taken()
   death_animation()
+  check_gameover()
 
  end
  --elseif hax*hax+hay*hay<=player_radius*player_radius and a.s==2
@@ -643,8 +659,9 @@ for be in all(beam) do
   reason = "orbital"
   del(be,beam)
   dead = true 
+  life_taken()
   death_animation()
- 
+  check_gameover()
  end 
 end
 
@@ -658,7 +675,6 @@ end
 
 
 function death_animation()
- print("death animation called")
  for i=1,25 do 
     add(player_parts,{x=cen_x,y=cen_y,sx=rnd(2)-1,sy=rnd(2)-1})
     end    
@@ -684,10 +700,12 @@ function revive_timer()
 end 
 
 function spawn_and_invinc()
+ if lives > 0 then 
  cen_x = 64
  cen_y = 75
  dead = false
  invincible = true
+ end 
 end
 
 function invinc_time()
@@ -1025,6 +1043,24 @@ function draw_score()
   print(s,3,2,8)
   
 end 
+
+function life_taken()
+ lives -= 1
+end
+
+function check_gameover()
+ if lives == 0
+ then game_over()
+ end
+end
+
+function game_over()
+ if best_score < score
+ then highscore = score
+ new_score=true
+ end 
+end
+ 
 
 
   
