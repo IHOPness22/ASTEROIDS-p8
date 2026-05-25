@@ -149,7 +149,6 @@ check_orbit()
 flash_orbit()
 oc_fire()
 move_beam()
-orbit_time()
 
 
 the_ufo_parts()
@@ -472,7 +471,7 @@ end
  for r in all(rocks) do 
  for a in all(asteroids) do
   test_r = sqrt((r.x)^2 + (r.y)^2)
-  circ(a.x, a.y, test_r, 8)
+  circ(a.x, a.y, a_radius, 8)
  end
  end
  
@@ -594,9 +593,9 @@ for a in all(asteroids) do
 hax=(a.x-cen_x)
 hay=(a.y-cen_y)
 if a.s == 3
- then a_radius=10
+ then a_radius=12
 elseif a.s == 2
- then a_radius=8
+ then a_radius=8 
 elseif a.s == 1
  then a_radius=5  
 end 
@@ -782,14 +781,14 @@ function split_asteroid(x,y)
 --asteroid and make three small
 --asteroids surrounding it-----
 for i=1,2 do
-add(asteroids,{x=x+rnd(60)-30,y=y+rnd(60)-30,r=rnd(1),rs=rnd(0.01)-0.002,s=2})
+add(asteroids,{x=x+rnd(40)-20,y=y+rnd(40)-20,r=rnd(1),rs=rnd(0.01)-0.002,s=2})
 end 
 
 end
 
 function split_med_asteroid(x,y)
 for i=1,2 do 
-add(asteroids,{x=x+rnd(60)-30,y=y+rnd(60)-30,r=rnd(1),rs=rnd(0.01)-0.002,s=1})
+add(asteroids,{x=x+rnd(40)-20,y=y+rnd(40)-20,r=rnd(1),rs=rnd(0.01)-0.002,s=1})
 end
 
 end
@@ -811,11 +810,9 @@ local hit_r = radius * 3
   local ay = a.y
   if a.s == 3
   then split_asteroid(ax,ay)
-  --score+=20
   add_score(20)
   elseif a.s == 2
   then split_med_asteroid(ax,ay)
-  --score+=50
   add_score(50)
   else --score+=100
   add_score(100)
@@ -1337,22 +1334,7 @@ function move_beam()
     then del(beam,be) --the right order
    end  
  end
-end   
-
-
-function orbit_time()
- for be in all(beam) do
-  orbital_timer += 1
-  if orbital_timer >= 5
-   then print("beam gone")
-   orbital_timer = 0
-   del(be,beam)
-   for o in all(oc) do
-   del(o,oc)
-   end  
-  end
- end
-end  
+end     
       
 __gfx__
 55555555555555571111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
